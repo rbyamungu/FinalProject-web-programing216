@@ -22,6 +22,20 @@ public class HomeController : Controller
     {
         return View();
     }
+    
+    public IActionResult loginScreen()
+    {
+        return View();
+    }
+
+    public IActionResult forget()
+    {
+        return View();
+    }
+
+
+
+    
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
