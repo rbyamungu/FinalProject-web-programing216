@@ -1,66 +1,53 @@
 image: mcr.microsoft.com/dotnet/sdk:latest
 
+stages:
+  - build
+  - test
+  - deploy
+
 variables:
   OBJECTS_DIRECTORY: 'obj'
   NUGET_PACKAGES_DIRECTORY: '.nuget'
   SOURCE_CODE_PATH: 'FinalProject/HalfAndHalf/'
 
 cache:
-  key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+  key: "${CI_COMMIT_REF_SLUG}"
   paths:
-    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/project.assets.json'
-    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/*.csproj.nuget.*'
-    - '$NUGET_PACKAGES_DIRECTORY'
+    - "${SOURCE_CODE_PATH}${OBJECTS_DIRECTORY}/project.assets.json"
+    - "${SOURCE_CODE_PATH}${OBJECTS_DIRECTORY}/*.csproj.nuget.*"
+    - "${NUGET_PACKAGES_DIRECTORY}"
   policy: pull-push
 
 before_script:
-  - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+  - cd ${SOURCE_CODE_PATH}
+  - dotnet restore --packages ${NUGET_PACKAGES_DIRECTORY}
 
 build:
   stage: build
   script:
-    - 'dotnet build --no-restore'
+    - dotnet build --no-restore
+  artifacts:
+    paths:
+      - ${SOURCE_CODE_PATH}bin/
+      - ${SOURCE_CODE_PATH}obj/
 
 tests:
   stage: test
   script:
-    - 'dotnet test --no-restore'
+    - dotnet test --no-restore
 
 deploy:
   stage: deploy
   script:
+    - apt-get update && apt-get install -y openssh-client
     - eval $(ssh-agent -s)
     - echo "${SSH_PRIVATE_KEY_HALF_SVR0}" | tr -d '\r' | ssh-add - > /dev/null
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H 10.200.12.179 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - ssh ${USER}@10.200.12.179 '/home/deployuser1/scriptToPull.sh'
-    - ssh ${USER}@10.200.12.179 hostname
-    - ssh ${USER}@10.200.12.179 w
-
+    - ssh ${DEPLOY_USER}@10.200.12.179 '/home/${DEPLOY_USER}/scriptToPull.sh'
+    - ssh ${DEPLOY_USER}@10.200.12.179 hostname
+    - ssh ${DEPLOY_USER}@10.200.12.179 w
+  only:
+    - main
   environment: production
-
-
-#build-job:
-#  stage: build
-#  script:
-#    - echo "Hello, $GITLAB_USER_LOGIN!"
-
-#test-job1:
-#  stage: test
-#  script:
-#    - echo "This job tests something"
-
-#test-job2:
-#  stage: test
-#  script:
-#    - echo "This job tests something, but takes more time than test-job1."
-#    - echo "After the echo commands complete, it runs the sleep command for 20 seconds"
-#    - echo "which simulates a test that runs 20 seconds longer than test-job1"
-#    - sleep 20
-
-#deploy-prod:
-#  stage: deploy
-#  script:
-#    - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
-#  environment: production
