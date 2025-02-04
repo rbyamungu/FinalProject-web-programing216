@@ -42,7 +42,7 @@ deploy:
   stage: deploy
   image: fedora:latest
   before_script:
-    - dnf install -y openssh-clients
+    - apt install -y openssh-clients
   script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
