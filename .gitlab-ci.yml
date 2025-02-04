@@ -10,7 +10,7 @@ variables:
   NUGET_PACKAGES_DIRECTORY: '.nuget'
   SOURCE_CODE_PATH: 'HalfAndHalf/'
   DEPLOY_USER: 'deployuser1'
-  DEPLOY_HOST: '10.200.12.179'
+  DEPLOY_HOST0: '10.200.12.179'
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}"
@@ -40,19 +40,19 @@ tests:
 
 deploy:
   stage: deploy
-  image: alpine:latest
+  image: fedora:latest
   before_script:
-    - apk add --no-cache openssh-client
+    - dnf install -y openssh-clients
   script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - echo "${SSH_PRIVATE_KEY_HALF_SVR0}" | tr -d '\r' > ~/.ssh/id_rsa
+    - echo "$SSH_PRIVATE_KEY_HALF_SVR0" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H 10.200.12.179 >> ~/.ssh/known_hosts
+    - ssh-keyscan -H $DEPLOY_HOST0 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@10.200.12.179 '/home/'${DEPLOY_USER}'/scriptToPull.sh'
-    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@10.200.12.179 'hostname'
-    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@10.200.12.179 'w'
+    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST0} '/home/'${DEPLOY_USER}'/scriptToPull.sh'
+    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST0} 'hostname'
+    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST0} 'w'
   only:
     - main
   environment: production
