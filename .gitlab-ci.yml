@@ -8,7 +8,7 @@ stages:
 variables:
   OBJECTS_DIRECTORY: 'obj'
   NUGET_PACKAGES_DIRECTORY: '.nuget'
-  SOURCE_CODE_PATH: 'FinalProject/HalfAndHalf/'
+  SOURCE_CODE_PATH: 'HalfAndHalf/'
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}"
