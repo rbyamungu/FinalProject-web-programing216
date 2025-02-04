@@ -40,9 +40,9 @@ tests:
 
 deploy:
   stage: deploy
-  image: fedora:latest
-  before_script:
-    - apt install -y openssh-clients
+  #image: fedora:latest
+  #before_script:
+  #  - apt install -y openssh-clients
   script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
