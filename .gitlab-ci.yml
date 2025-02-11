@@ -10,7 +10,6 @@ variables:
   NUGET_PACKAGES_DIRECTORY: '.nuget'
   SOURCE_CODE_PATH: 'HalfAndHalf/'
   DEPLOY_PATH: '/home/${USER}/HalfAndHalf'
-  GIT_REPO_URL: '${CI_REPOSITORY_URL}'
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}"
@@ -49,10 +48,11 @@ deploy-server0:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $DEPLOY_HOST0 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    # Clone/update repository
-    - ssh ${USER}@$DEPLOY_HOST0 "if [ ! -d ${DEPLOY_PATH} ]; then git clone ${GIT_REPO_URL} ${DEPLOY_PATH}; else cd ${DEPLOY_PATH} && git pull; fi"
-    # Copy published files
-    - scp -r publish/* ${USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/publish/
+    # Create directory and copy entire project
+    - ssh ${USER}@$DEPLOY_HOST0 "mkdir -p ${DEPLOY_PATH}"
+    - tar czf project.tar.gz -C .. .
+    - scp project.tar.gz ${USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/
+    - ssh ${USER}@$DEPLOY_HOST0 "cd ${DEPLOY_PATH} && tar xzf project.tar.gz && rm project.tar.gz"
   only:
     - main
   environment:
@@ -67,10 +67,11 @@ deploy-server1:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $DEPLOY_HOST1 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    # Clone/update repository
-    - ssh ${USER}@$DEPLOY_HOST1 "if [ ! -d ${DEPLOY_PATH} ]; then git clone ${GIT_REPO_URL} ${DEPLOY_PATH}; else cd ${DEPLOY_PATH} && git pull; fi"
-    # Copy published files
-    - scp -r publish/* ${USER}@$DEPLOY_HOST1:${DEPLOY_PATH}/publish/
+    # Create directory and copy entire project
+    - ssh ${USER}@$DEPLOY_HOST1 "mkdir -p ${DEPLOY_PATH}"
+    - tar czf project.tar.gz -C .. .
+    - scp project.tar.gz ${USER}@$DEPLOY_HOST1:${DEPLOY_PATH}/
+    - ssh ${USER}@$DEPLOY_HOST1 "cd ${DEPLOY_PATH} && tar xzf project.tar.gz && rm project.tar.gz"
   only:
     - main
   environment:
@@ -85,10 +86,11 @@ deploy-server2:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $DEPLOY_HOST2 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    # Clone/update repository
-    - ssh ${USER}@$DEPLOY_HOST2 "if [ ! -d ${DEPLOY_PATH} ]; then git clone ${GIT_REPO_URL} ${DEPLOY_PATH}; else cd ${DEPLOY_PATH} && git pull; fi"
-    # Copy published files
-    - scp -r publish/* ${USER}@$DEPLOY_HOST2:${DEPLOY_PATH}/publish/
+    # Create directory and copy entire project
+    - ssh ${USER}@$DEPLOY_HOST2 "mkdir -p ${DEPLOY_PATH}"
+    - tar czf project.tar.gz -C .. .
+    - scp project.tar.gz ${USER}@$DEPLOY_HOST2:${DEPLOY_PATH}/
+    - ssh ${USER}@$DEPLOY_HOST2 "cd ${DEPLOY_PATH} && tar xzf project.tar.gz && rm project.tar.gz"
   only:
     - main
   environment:
@@ -103,10 +105,11 @@ deploy-server3:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $DEPLOY_HOST3 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    # Clone/update repository
-    - ssh ${USER}@$DEPLOY_HOST3 "if [ ! -d ${DEPLOY_PATH} ]; then git clone ${GIT_REPO_URL} ${DEPLOY_PATH}; else cd ${DEPLOY_PATH} && git pull; fi"
-    # Copy published files
-    - scp -r publish/* ${USER}@$DEPLOY_HOST3:${DEPLOY_PATH}/publish/
+    # Create directory and copy entire project
+    - ssh ${USER}@$DEPLOY_HOST3 "mkdir -p ${DEPLOY_PATH}"
+    - tar czf project.tar.gz -C .. .
+    - scp project.tar.gz ${USER}@$DEPLOY_HOST3:${DEPLOY_PATH}/
+    - ssh ${USER}@$DEPLOY_HOST3 "cd ${DEPLOY_PATH} && tar xzf project.tar.gz && rm project.tar.gz"
   only:
     - main
   environment:
