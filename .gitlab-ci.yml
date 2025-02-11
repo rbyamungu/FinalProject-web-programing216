@@ -11,6 +11,9 @@ variables:
   SOURCE_CODE_PATH: 'HalfAndHalf/'
   DEPLOY_USER: 'deployuser1'
   DEPLOY_HOST0: '10.200.12.179'
+  DEPLOY_HOST1: '10.200.12.182'
+  DEPLOY_HOST2: '10.200.12.181'
+  DEPLOY_HOST3: '10.200.12.180'
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}"
@@ -28,8 +31,10 @@ build:
   stage: build
   script:
     - dotnet build --no-restore
+    - dotnet publish -c Release -o ../publish
   artifacts:
     paths:
+      - publish/
       - ${SOURCE_CODE_PATH}bin/
       - ${SOURCE_CODE_PATH}obj/
 
@@ -38,11 +43,8 @@ tests:
   script:
     - dotnet test --no-restore
 
-deploy:
+deploy-server0:
   stage: deploy
-  #image: fedora:latest
-  #before_script:
-  #  - apt install -y openssh-clients
   script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
@@ -51,8 +53,52 @@ deploy:
     - ssh-keyscan -H $DEPLOY_HOST0 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST0} '/home/'${DEPLOY_USER}'/scriptToPull.sh'
-    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST0} 'hostname'
-    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST0} 'w'
   only:
     - main
-  environment: production
+  environment: 
+    name: production-server0
+
+deploy-server1:
+  stage: deploy
+  script:
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_HALF_SVR1" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $DEPLOY_HOST1 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST1} '/home/'${DEPLOY_USER}'/scriptToPull.sh'
+  only:
+    - main
+  environment: 
+    name: production-server1
+
+deploy-server2:
+  stage: deploy
+  script:
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_HALF_SVR2" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $DEPLOY_HOST2 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST2} '/home/'${DEPLOY_USER}'/scriptToPull.sh'
+  only:
+    - main
+  environment: 
+    name: production-server2
+
+deploy-server3:
+  stage: deploy
+  script:
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_HALF_SVR3" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $DEPLOY_HOST3 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST3} '/home/'${DEPLOY_USER}'/scriptToPull.sh'
+  only:
+    - main
+  environment: 
+    name: production-server3

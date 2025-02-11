@@ -1,7 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using HalfAndHalf.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
@@ -14,7 +19,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // This replaces MapStaticAssets
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
@@ -22,6 +27,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-// Remove .WithStaticAssets() as it's not needed
 
 app.Run();
