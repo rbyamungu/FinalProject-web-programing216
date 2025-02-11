@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HalfAndHalf.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250211032125_InitialMigration")]
+    [Migration("20250211153303_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -155,18 +155,11 @@ namespace HalfAndHalf.Migrations
                         .HasColumnType("text")
                         .HasColumnName("train_type");
 
-                    b.Property<int?>("railroad_id")
-                        .HasColumnType("integer");
-
                     b.HasKey("TrainId");
 
                     b.HasIndex("RailroadId");
 
-                    b.ToTable("incident_train", null, t =>
-                        {
-                            t.Property("railroad_id")
-                                .HasColumnName("railroad_id1");
-                        });
+                    b.ToTable("incident_train", (string)null);
                 });
 
             modelBuilder.Entity("HalfAndHalf.Models.IncidentTrainCar", b =>

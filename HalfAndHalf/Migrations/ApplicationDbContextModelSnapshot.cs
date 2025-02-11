@@ -152,18 +152,11 @@ namespace HalfAndHalf.Migrations
                         .HasColumnType("text")
                         .HasColumnName("train_type");
 
-                    b.Property<int?>("railroad_id")
-                        .HasColumnType("integer");
-
                     b.HasKey("TrainId");
 
                     b.HasIndex("RailroadId");
 
-                    b.ToTable("incident_train", null, t =>
-                        {
-                            t.Property("railroad_id")
-                                .HasColumnName("railroad_id1");
-                        });
+                    b.ToTable("incident_train", (string)null);
                 });
 
             modelBuilder.Entity("HalfAndHalf.Models.IncidentTrainCar", b =>

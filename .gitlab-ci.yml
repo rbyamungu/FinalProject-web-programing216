@@ -9,11 +9,8 @@ variables:
   OBJECTS_DIRECTORY: 'obj'
   NUGET_PACKAGES_DIRECTORY: '.nuget'
   SOURCE_CODE_PATH: 'HalfAndHalf/'
-  DEPLOY_USER: 'deployuser1'
-  DEPLOY_HOST0: '10.200.12.179'
-  DEPLOY_HOST1: '10.200.12.182'
-  DEPLOY_HOST2: '10.200.12.181'
-  DEPLOY_HOST3: '10.200.12.180'
+  DEPLOY_PATH: '/home/${USER}/HalfAndHalf'
+  GIT_REPO_URL: '${CI_REPOSITORY_URL}'
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}"
@@ -52,10 +49,13 @@ deploy-server0:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $DEPLOY_HOST0 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST0} '/home/'${DEPLOY_USER}'/scriptToPull.sh'
+    # Clone/update repository
+    - ssh ${USER}@$DEPLOY_HOST0 "if [ ! -d ${DEPLOY_PATH} ]; then git clone ${GIT_REPO_URL} ${DEPLOY_PATH}; else cd ${DEPLOY_PATH} && git pull; fi"
+    # Copy published files
+    - scp -r publish/* ${USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/publish/
   only:
     - main
-  environment: 
+  environment:
     name: production-server0
 
 deploy-server1:
@@ -67,10 +67,13 @@ deploy-server1:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $DEPLOY_HOST1 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST1} '/home/'${DEPLOY_USER}'/scriptToPull.sh'
+    # Clone/update repository
+    - ssh ${USER}@$DEPLOY_HOST1 "if [ ! -d ${DEPLOY_PATH} ]; then git clone ${GIT_REPO_URL} ${DEPLOY_PATH}; else cd ${DEPLOY_PATH} && git pull; fi"
+    # Copy published files
+    - scp -r publish/* ${USER}@$DEPLOY_HOST1:${DEPLOY_PATH}/publish/
   only:
     - main
-  environment: 
+  environment:
     name: production-server1
 
 deploy-server2:
@@ -82,10 +85,13 @@ deploy-server2:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $DEPLOY_HOST2 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST2} '/home/'${DEPLOY_USER}'/scriptToPull.sh'
+    # Clone/update repository
+    - ssh ${USER}@$DEPLOY_HOST2 "if [ ! -d ${DEPLOY_PATH} ]; then git clone ${GIT_REPO_URL} ${DEPLOY_PATH}; else cd ${DEPLOY_PATH} && git pull; fi"
+    # Copy published files
+    - scp -r publish/* ${USER}@$DEPLOY_HOST2:${DEPLOY_PATH}/publish/
   only:
     - main
-  environment: 
+  environment:
     name: production-server2
 
 deploy-server3:
@@ -97,8 +103,11 @@ deploy-server3:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $DEPLOY_HOST3 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - ssh -i ~/.ssh/id_rsa ${DEPLOY_USER}@${DEPLOY_HOST3} '/home/'${DEPLOY_USER}'/scriptToPull.sh'
+    # Clone/update repository
+    - ssh ${USER}@$DEPLOY_HOST3 "if [ ! -d ${DEPLOY_PATH} ]; then git clone ${GIT_REPO_URL} ${DEPLOY_PATH}; else cd ${DEPLOY_PATH} && git pull; fi"
+    # Copy published files
+    - scp -r publish/* ${USER}@$DEPLOY_HOST3:${DEPLOY_PATH}/publish/
   only:
     - main
-  environment: 
+  environment:
     name: production-server3

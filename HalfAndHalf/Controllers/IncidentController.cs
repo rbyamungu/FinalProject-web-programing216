@@ -5,7 +5,7 @@ using HalfAndHalf.Models;
 
 namespace HalfAndHalf.Controllers
 {
-   public class IncidentController : Controller
+    public class IncidentController : Controller
     {
         private readonly ApplicationDbContext _context;
 
@@ -21,7 +21,7 @@ namespace HalfAndHalf.Controllers
                 .Include(i => i.Company)
                 .Include(i => i.Railroad)
                 .Include(i => i.IncidentTrain)
-                .AsNoTracking()  // Add this for better performance
+                .AsNoTracking()
                 .ToListAsync();
 
             return View(incidents);

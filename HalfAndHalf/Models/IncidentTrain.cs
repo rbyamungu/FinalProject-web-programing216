@@ -19,6 +19,6 @@ public class IncidentTrain
     [Column("railroad_id")]
     public int? RailroadId { get; set; }
 
-    [ForeignKey("railroad_id")]
+    [ForeignKey(nameof(RailroadId))]
     public virtual Railroad? Railroad { get; set; }
 }

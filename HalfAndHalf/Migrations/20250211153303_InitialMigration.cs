@@ -47,8 +47,7 @@ namespace HalfAndHalf.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name_number = table.Column<string>(type: "text", nullable: false),
                     train_type = table.Column<string>(type: "text", nullable: false),
-                    railroad_id = table.Column<int>(type: "integer", nullable: true),
-                    railroad_id1 = table.Column<int>(type: "integer", nullable: true)
+                    railroad_id = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {

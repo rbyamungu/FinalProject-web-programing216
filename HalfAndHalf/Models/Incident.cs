@@ -55,17 +55,12 @@ public class Incident
     [Column("fatality_count")]
     public int? FatalityCount { get; set; }
 
-    // Remove the ForeignKey attributes here and use the property names
+    [ForeignKey(nameof(CompanyId))]
     public virtual Company? Company { get; set; }
+
+    [ForeignKey(nameof(RailroadId))]
     public virtual Railroad? Railroad { get; set; }
+
+    [ForeignKey(nameof(IncidentTrainId))]
     public virtual IncidentTrain? IncidentTrain { get; set; }
-
-   // [ForeignKey(nameof(CompanyId))]
-   // public virtual Company? Company { get; set; }
-
-    //[ForeignKey(nameof(RailroadId))]
-    //public virtual Railroad? Railroad { get; set; }
-
-    //[ForeignKey(nameof(IncidentTrainId))]
-    //public virtual IncidentTrain? IncidentTrain { get; set; }
 }

@@ -6760,19 +6760,19 @@
     ]
   },
   "packageFolders": {
-    "/home/bruhigita/.nuget/packages/": {}
+    "C:\\Users\\rbyam\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
+      "projectUniqueName": "\\\\wsl.localhost\\Ubuntu-24.04\\home\\bruhigita\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
       "projectName": "HalfAndHalf",
-      "projectPath": "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
-      "packagesPath": "/home/bruhigita/.nuget/packages/",
-      "outputPath": "/home/bruhigita/FinalProject/HalfAndHalf/obj/",
+      "projectPath": "\\\\wsl.localhost\\Ubuntu-24.04\\home\\bruhigita\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
+      "packagesPath": "C:\\Users\\rbyam\\.nuget\\packages\\",
+      "outputPath": "\\\\wsl.localhost\\Ubuntu-24.04\\home\\bruhigita\\FinalProject\\HalfAndHalf\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/bruhigita/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\rbyam\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -6790,6 +6790,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -6848,7 +6853,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
