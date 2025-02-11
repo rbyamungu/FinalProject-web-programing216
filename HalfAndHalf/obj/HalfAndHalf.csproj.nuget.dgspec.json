@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "\\\\wsl.localhost\\Ubuntu-24.04\\home\\bruhigita\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj": {}
+    "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj": {}
   },
   "projects": {
-    "\\\\wsl.localhost\\Ubuntu-24.04\\home\\bruhigita\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj": {
+    "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "\\\\wsl.localhost\\Ubuntu-24.04\\home\\bruhigita\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
+        "projectUniqueName": "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
         "projectName": "HalfAndHalf",
-        "projectPath": "\\\\wsl.localhost\\Ubuntu-24.04\\home\\bruhigita\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
-        "packagesPath": "C:\\Users\\rbyam\\.nuget\\packages\\",
-        "outputPath": "\\\\wsl.localhost\\Ubuntu-24.04\\home\\bruhigita\\FinalProject\\HalfAndHalf\\obj\\",
+        "projectPath": "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
+        "packagesPath": "/home/bruhigita/.nuget/packages/",
+        "outputPath": "/home/bruhigita/FinalProject/HalfAndHalf/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\rbyam\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/bruhigita/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -32,11 +32,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -95,7 +90,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
