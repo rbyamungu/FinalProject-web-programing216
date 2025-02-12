@@ -1,0 +1,39 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: Install Nginx
+      yum:
+        name: nginx
+        state: present
+
+    - name: Configure Nginx
+      template:
+        src: ../templates/nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart Nginx
+
+    - name: Ensure Nginx is running
+      systemd:
+        name: nginx
+        enabled: yes
+        state: started
+
+    - name: Open HTTP port in firewall
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+      notify: Reload Firewall
+
+  handlers:
+    - name: Restart Nginx
+      systemd:
+        name: nginx
+        state: restarted
+
+    - name: Reload Firewall
+      command: firewall-cmd --reload
