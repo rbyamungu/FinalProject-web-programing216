@@ -15,6 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<IncidentTrain> IncidentTrains { get; set; }
     public DbSet<Incident> Incidents { get; set; }
     public DbSet<IncidentTrainCar> IncidentTrainCars { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

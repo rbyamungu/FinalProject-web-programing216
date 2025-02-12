@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\IDC\\Final Project Database\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj": {}
+    "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj": {}
   },
   "projects": {
-    "C:\\Users\\IDC\\Final Project Database\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj": {
+    "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\IDC\\Final Project Database\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
+        "projectUniqueName": "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
         "projectName": "HalfAndHalf",
-        "projectPath": "C:\\Users\\IDC\\Final Project Database\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
-        "packagesPath": "C:\\Users\\IDC\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\IDC\\Final Project Database\\FinalProject\\HalfAndHalf\\obj\\",
+        "projectPath": "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
+        "packagesPath": "C:\\Users\\nate\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\IDC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\nate\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -43,13 +42,18 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "direct"
-        }
+          "auditMode": "all"
+        },
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
             "Microsoft.CodeAnalysis.Common": {
               "target": "Package",
               "version": "[4.8.0, )"
@@ -102,7 +106,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.405/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,16 +1,19 @@
+
+
 <link rel="stylesheet" href="/css/login.css">
 
  <h1 id="loginscreen">Login Page</h1>
 
 <form action="Login" method="post">
-    <label for="username">Username</label>
+    <label for="username">Username:</label>
     <input type="text" id="username" name="username">
 
-    <label for="password">Password</label>
+    <label for="password">Password:</label>
     <input type="text" id="password" name="password"><br><br>
     
     <button type="subment" id="forget-password-link"> Forget Password</button> 
-    <button type="subment"> Sign Up?</button> <br> <br>
+
+    <p>Don't have an account? <a asp-controller="Account" asp-action="Register">Sign up here </a></p>
     
     <input type="submit" value="Login"> <br> <br>
     

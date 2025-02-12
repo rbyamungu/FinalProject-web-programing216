@@ -2,6 +2,19 @@
   "version": 3,
   "targets": {
     "net8.0": {
+      "BCrypt.Net-Next/4.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/BCrypt.Net-Next.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/BCrypt.Net-Next.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Humanizer/2.14.1": {
         "type": "package",
         "dependencies": {
@@ -2488,6 +2501,37 @@
     }
   },
   "libraries": {
+    "BCrypt.Net-Next/4.0.3": {
+      "sha512": "W+U9WvmZQgi5cX6FS5GDtDoPzUCV4LkBLkywq/kRZhuDwcbavOzcDAr3LXJFqHUi952Yj3LEYoWW0jbEUQChsA==",
+      "type": "package",
+      "path": "bcrypt.net-next/4.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "bcrypt.net-next.4.0.3.nupkg.sha512",
+        "bcrypt.net-next.nuspec",
+        "ico.png",
+        "lib/net20/BCrypt.Net-Next.dll",
+        "lib/net20/BCrypt.Net-Next.xml",
+        "lib/net35/BCrypt.Net-Next.dll",
+        "lib/net35/BCrypt.Net-Next.xml",
+        "lib/net462/BCrypt.Net-Next.dll",
+        "lib/net462/BCrypt.Net-Next.xml",
+        "lib/net472/BCrypt.Net-Next.dll",
+        "lib/net472/BCrypt.Net-Next.xml",
+        "lib/net48/BCrypt.Net-Next.dll",
+        "lib/net48/BCrypt.Net-Next.xml",
+        "lib/net5.0/BCrypt.Net-Next.dll",
+        "lib/net5.0/BCrypt.Net-Next.xml",
+        "lib/net6.0/BCrypt.Net-Next.dll",
+        "lib/net6.0/BCrypt.Net-Next.xml",
+        "lib/netstandard2.0/BCrypt.Net-Next.dll",
+        "lib/netstandard2.0/BCrypt.Net-Next.xml",
+        "lib/netstandard2.1/BCrypt.Net-Next.dll",
+        "lib/netstandard2.1/BCrypt.Net-Next.xml",
+        "readme.md"
+      ]
+    },
     "Humanizer/2.14.1": {
       "sha512": "/FUTD3cEceAAmJSCPN9+J+VhGwmL/C12jvwlyM1DFXShEMsBzvLzLqSrJ2rb+k/W2znKw7JyflZgZpyE+tI7lA==",
       "type": "package",
@@ -6750,6 +6794,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "BCrypt.Net-Next >= 4.0.3",
       "Microsoft.CodeAnalysis.Common >= 4.8.0",
       "Microsoft.EntityFrameworkCore >= 8.0.2",
       "Microsoft.EntityFrameworkCore.Design >= 8.0.2",
@@ -6760,23 +6805,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\IDC\\.nuget\\packages\\": {},
+    "C:\\Users\\nate\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\IDC\\Final Project Database\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
+      "projectUniqueName": "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
       "projectName": "HalfAndHalf",
-      "projectPath": "C:\\Users\\IDC\\Final Project Database\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
-      "packagesPath": "C:\\Users\\IDC\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\IDC\\Final Project Database\\FinalProject\\HalfAndHalf\\obj\\",
+      "projectPath": "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
+      "packagesPath": "C:\\Users\\nate\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\IDC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\nate\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -6785,7 +6830,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -6802,13 +6846,18 @@
       "restoreAuditProperties": {
         "enableAudit": "true",
         "auditLevel": "low",
-        "auditMode": "direct"
-      }
+        "auditMode": "all"
+      },
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "BCrypt.Net-Next": {
+            "target": "Package",
+            "version": "[4.0.3, )"
+          },
           "Microsoft.CodeAnalysis.Common": {
             "target": "Package",
             "version": "[4.8.0, )"
@@ -6861,7 +6910,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.405/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
@@ -6870,7 +6919,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Detected package version outside of dependency constraint: Microsoft.CodeAnalysis.CSharp.Features 4.8.0-3.final requires Microsoft.CodeAnalysis.Common (= 4.8.0-3.final) but version Microsoft.CodeAnalysis.Common 4.8.0 was resolved.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.CodeAnalysis.CSharp.Workspaces 4.8.0-3.final requires Microsoft.CodeAnalysis.Common (= 4.8.0-3.final) but version Microsoft.CodeAnalysis.Common 4.8.0 was resolved.",
       "libraryId": "Microsoft.CodeAnalysis.Common",
       "targetGraphs": [
         "net8.0"
@@ -6890,16 +6939,6 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Detected package version outside of dependency constraint: Microsoft.CodeAnalysis.Features 4.8.0-3.final requires Microsoft.CodeAnalysis.Common (= 4.8.0-3.final) but version Microsoft.CodeAnalysis.Common 4.8.0 was resolved.",
-      "libraryId": "Microsoft.CodeAnalysis.Common",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1608",
-      "level": "Warning",
-      "warningLevel": 1,
       "message": "Detected package version outside of dependency constraint: Microsoft.CodeAnalysis.Workspaces.Common 4.8.0-3.final requires Microsoft.CodeAnalysis.Common (= 4.8.0-3.final) but version Microsoft.CodeAnalysis.Common 4.8.0 was resolved.",
       "libraryId": "Microsoft.CodeAnalysis.Common",
       "targetGraphs": [
@@ -6910,7 +6949,17 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Detected package version outside of dependency constraint: Microsoft.CodeAnalysis.CSharp.Workspaces 4.8.0-3.final requires Microsoft.CodeAnalysis.Common (= 4.8.0-3.final) but version Microsoft.CodeAnalysis.Common 4.8.0 was resolved.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.CodeAnalysis.CSharp.Features 4.8.0-3.final requires Microsoft.CodeAnalysis.Common (= 4.8.0-3.final) but version Microsoft.CodeAnalysis.Common 4.8.0 was resolved.",
+      "libraryId": "Microsoft.CodeAnalysis.Common",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1608",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Detected package version outside of dependency constraint: Microsoft.CodeAnalysis.Features 4.8.0-3.final requires Microsoft.CodeAnalysis.Common (= 4.8.0-3.final) but version Microsoft.CodeAnalysis.Common 4.8.0 was resolved.",
       "libraryId": "Microsoft.CodeAnalysis.Common",
       "targetGraphs": [
         "net8.0"
@@ -6922,6 +6971,86 @@
       "warningLevel": 1,
       "message": "Detected package version outside of dependency constraint: Microsoft.CodeAnalysis.Scripting.Common 4.8.0-3.final requires Microsoft.CodeAnalysis.Common (= 4.8.0-3.final) but version Microsoft.CodeAnalysis.Common 4.8.0 was resolved.",
       "libraryId": "Microsoft.CodeAnalysis.Common",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj",
+      "libraryId": "Microsoft.Extensions.Caching.Memory",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Npgsql' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-x9vc-6hfv-hg8c",
+      "libraryId": "Npgsql",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'NuGet.Common' 6.3.1 has a known high severity vulnerability, https://github.com/advisories/GHSA-6qmf-mmc7-6c2p",
+      "libraryId": "NuGet.Common",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1904",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'NuGet.Packaging' 6.3.1 has a known critical severity vulnerability, https://github.com/advisories/GHSA-68w7-72jg-6qpp",
+      "libraryId": "NuGet.Packaging",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'NuGet.Protocol' 6.3.1 has a known high severity vulnerability, https://github.com/advisories/GHSA-6qmf-mmc7-6c2p",
+      "libraryId": "NuGet.Protocol",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'System.Formats.Asn1' 5.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-447r-wph3-92pm",
+      "libraryId": "System.Formats.Asn1",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'System.Text.Json' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-8g4q-xg66-9fp4",
+      "libraryId": "System.Text.Json",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'System.Text.Json' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-hh2w-p6rv-4g7w",
+      "libraryId": "System.Text.Json",
       "targetGraphs": [
         "net8.0"
       ]
