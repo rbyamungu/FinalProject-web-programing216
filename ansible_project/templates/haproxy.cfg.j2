@@ -1,0 +1,63 @@
+#---------------------------------------------------------------------
+# Global settings
+#---------------------------------------------------------------------
+global
+    log         127.0.0.1 local2
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    user        haproxy
+    group       haproxy
+    daemon
+    stats socket /var/lib/haproxy/stats
+    ssl-default-bind-ciphers PROFILE=SYSTEM
+    ssl-default-server-ciphers PROFILE=SYSTEM
+
+#---------------------------------------------------------------------
+# Defaults
+#---------------------------------------------------------------------
+defaults
+    mode                    http
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option http-server-close
+    option forwardfor       except 127.0.0.0/8
+    option                  redispatch
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 3000
+
+#---------------------------------------------------------------------
+# Frontend configuration
+#---------------------------------------------------------------------
+frontend main
+    bind *:80
+    default_backend             backend_servers
+
+#---------------------------------------------------------------------
+# Backend configuration
+#---------------------------------------------------------------------
+backend backend_servers
+    balance     roundrobin
+    option httpchk
+    http-check send meth GET ver HTTP/1.1 hdr Host localhost
+    http-check expect status 200
+    server web1 10.200.12.180:5000 check inter 3s rise 2 fall 5
+    server web2 10.200.12.181:5000 check inter 3s rise 2 fall 5
+
+#---------------------------------------------------------------------
+# Statistics configuration
+#---------------------------------------------------------------------
+listen stats
+    bind *:8404
+    stats enable
+    stats uri /stats
+    stats refresh 30s
+    stats admin if TRUE
