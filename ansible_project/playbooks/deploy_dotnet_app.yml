@@ -87,13 +87,27 @@
           - "Ping result: {{ ping_result.rc }}"
           - "NuGet DNS result: {{ nuget_dns_result.rc }}"
       failed_when: false
+    - name: Clean up duplicate directories
+  file:
+    path: "{{ app_directory }}/app/HalfAndHalf"
+    state: absent
+
+    - name: Clean up src directory
+      file:
+        path: "{{ app_directory }}/src"
+        state: absent
+
+    - name: Ensure proper directory structure
+      shell: >
+        ls -la {{ app_directory }}/app/
+      register: dir_check
 
     - name: Build Docker image with network retry
       shell: >
-        docker build 
+        cd {{ app_directory }}/app && docker build 
         -t {{ docker_image_name }}:latest 
         -f {{ app_directory }}/Dockerfile 
-        {{ app_directory }}/app
+        .
       environment:
         DOCKER_BUILDKIT_DNS: "{{ dns_servers | join(',') }}"
       retries: 3
