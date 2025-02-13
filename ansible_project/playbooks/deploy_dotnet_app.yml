@@ -88,9 +88,9 @@
           - "NuGet DNS result: {{ nuget_dns_result.rc }}"
       failed_when: false
     - name: Clean up duplicate directories
-  file:
-    path: "{{ app_directory }}/app/HalfAndHalf"
-    state: absent
+      file:
+        path: "{{ app_directory }}/app/HalfAndHalf"
+        state: absent
 
     - name: Clean up src directory
       file:
