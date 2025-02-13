@@ -87,6 +87,7 @@
           - "Ping result: {{ ping_result.rc }}"
           - "NuGet DNS result: {{ nuget_dns_result.rc }}"
       failed_when: false
+
     - name: Clean up duplicate directories
       file:
         path: "{{ app_directory }}/app/HalfAndHalf"
@@ -101,21 +102,42 @@
       shell: >
         ls -la {{ app_directory }}/app/
       register: dir_check
+# Add these debug tasks before the Docker build
+    - name: Show directory structure before build
+      shell: |
+        echo "=== App Directory ==="
+        ls -la {{ app_directory }}
+        echo "=== App Contents ==="
+        ls -la {{ app_directory }}/app/
+        echo "=== Dockerfile Contents ==="
+        cat {{ app_directory }}/Dockerfile
+      register: debug_output
 
+    - name: Display debug output
+      debug:
+        var: debug_output.stdout_lines
+
+    # Modify the build task to be more verbose
     - name: Build Docker image with network retry
       shell: >
         cd {{ app_directory }}/app && docker build 
+        --no-cache 
         -t {{ docker_image_name }}:latest 
         -f {{ app_directory }}/Dockerfile 
-        .
+        . 2>&1
       environment:
         DOCKER_BUILDKIT_DNS: "{{ dns_servers | join(',') }}"
+      register: docker_build_result
       retries: 3
       delay: 10
-      register: docker_build_result
       until: docker_build_result.rc == 0
       changed_when: false
 
+    - name: Show Docker build output
+      debug:
+        var: docker_build_result.stdout_lines
+      when: docker_build_result.stdout_lines is defined
+      
     - name: Stop existing container if running
       docker_container:
         name: "{{ app_name }}"
