@@ -12,14 +12,7 @@ variables:
   DEPLOY_PATH: '/home/${DEPLOY_USER}/FinalProject'
   ANSIBLE_PROJECT_PATH: 'ansible_project'
 
-cache:
-  key: "${CI_COMMIT_REF_SLUG}"
-  paths:
-    - "${SOURCE_CODE_PATH}${OBJECTS_DIRECTORY}/project.assets.json"
-    - "${SOURCE_CODE_PATH}${OBJECTS_DIRECTORY}/*.csproj.nuget.*"
-    - "${NUGET_PACKAGES_DIRECTORY}"
-  policy: pull-push
-
+#restore the nuget packeges
 before_script:
   - cd ${SOURCE_CODE_PATH}
   - dotnet restore --packages ${NUGET_PACKAGES_DIRECTORY}
@@ -43,10 +36,11 @@ tests:
 
 deploy:
   stage: deploy
+  image: ubuntu:latest
   before_script:
     # Install required SSH tools
     - apt-get update
-    - apt-get install -y openssh-client
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y openssh-client
   script:
     # Setup SSH access
     - mkdir -p ~/.ssh
