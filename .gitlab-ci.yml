@@ -35,11 +35,9 @@ tests:
     - dotnet test --no-restore
 
 deploy:
-  stage: deploy
   image: ubuntu:latest
   before_script:
-    # Install required SSH tools
-    - apt-get update
+    - apt-get update -y
     - DEBIAN_FRONTEND=noninteractive apt-get install -y openssh-client
   script:
     # Setup SSH access
@@ -64,15 +62,7 @@ deploy:
 
     # Deploy to control node (half-server-0)
     - ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "mkdir -p ${DEPLOY_PATH}"
-    - scp project.tar.gz ${DEPLOY_USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/
-    
-    # Create temp directory and archive
-    #- mkdir -p /tmp/deploy
-    #- cp -r . /tmp/deploy/
-    #- cd /tmp/deploy
-    #- tar --exclude='*.git' --exclude='obj' --exclude='bin' -czf project.tar.gz .
-
-    
+    - scp /tmp/project.tar.gz ${DEPLOY_USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/
     
     # Extract and trigger Ansible deployment
     - |
