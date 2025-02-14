@@ -52,7 +52,10 @@ deploy:
     - ssh-keyscan -H $DEPLOY_HOST0 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
 
-    # Create archive excluding unnecessary files
+    # Create temp directory and archive
+    - mkdir -p /tmp/deploy
+    - cp -r . /tmp/deploy/
+    - cd /tmp/deploy
     - tar --exclude='*.git' --exclude='obj' --exclude='bin' -czf project.tar.gz .
 
     # Deploy to control node (half-server-0)
