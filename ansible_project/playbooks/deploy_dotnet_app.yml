@@ -1,0 +1,167 @@
+---
+# Playbook to deploy .NET application using Docker
+- hosts: webservers
+  become: yes
+
+  vars:
+    app_name: HalfAndHalf
+    app_directory: /opt/{{ app_name }}
+    docker_image_name: halfandhalf
+    docker_port: 5000
+    project_path: "{{ playbook_dir }}/../../HalfAndHalf"
+    dockerfile_path: "{{ playbook_dir }}/../../dockerfile"
+    dns_servers:
+      - 10.200.0.150
+      - 10.200.0.20
+
+  tasks:
+    - name: Install required packages
+      dnf:
+        name: 
+          - docker
+          - docker-compose
+          - net-tools
+          - bind-utils
+        state: present
+
+    - name: Ensure Docker service is running and enabled
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Configure DNS servers
+      copy:
+        content: |
+          nameserver {{ dns_servers[0] }}
+          nameserver {{ dns_servers[1] }}
+        dest: /etc/resolv.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Check internet connectivity
+      shell: ping -c 4 8.8.8.8
+      register: ping_result
+      ignore_errors: yes
+
+    - name: Check NuGet repository connectivity
+      shell: nslookup api.nuget.org
+      register: nuget_dns_result
+      ignore_errors: yes
+
+    - name: Ensure app directory exists
+      file:
+        path: "{{ app_directory }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+
+    - name: Set SELinux context for app directory
+      sefcontext:
+        target: "{{ app_directory }}(/.*)?"
+        setype: container_file_t
+        state: present
+      register: se_context
+
+    - name: Apply new SELinux context
+      command: restorecon -R {{ app_directory }}
+      when: se_context.changed
+
+    - name: Copy Dockerfile
+      copy:
+        src: "{{ dockerfile_path }}"
+        dest: "{{ app_directory }}/Dockerfile"
+        mode: preserve
+
+    - name: Copy project files
+      copy:
+        src: "{{ project_path }}/"
+        dest: "{{ app_directory }}/app/"
+        mode: preserve
+
+    - name: Verify connectivity diagnostics
+      debug:
+        msg: 
+          - "Ping result: {{ ping_result.rc }}"
+          - "NuGet DNS result: {{ nuget_dns_result.rc }}"
+      failed_when: false
+
+    - name: Clean up duplicate directories
+      file:
+        path: "{{ app_directory }}/app/HalfAndHalf"
+        state: absent
+
+    - name: Clean up src directory
+      file:
+        path: "{{ app_directory }}/src"
+        state: absent
+
+    - name: Ensure proper directory structure
+      shell: >
+        ls -la {{ app_directory }}/app/
+      register: dir_check
+# Add these debug tasks before the Docker build
+    - name: Show directory structure before build
+      shell: |
+        echo "=== App Directory ==="
+        ls -la {{ app_directory }}
+        echo "=== App Contents ==="
+        ls -la {{ app_directory }}/app/
+        echo "=== Dockerfile Contents ==="
+        cat {{ app_directory }}/Dockerfile
+      register: debug_output
+
+    - name: Display debug output
+      debug:
+        var: debug_output.stdout_lines
+
+    # Modify the build task to be more verbose
+    - name: Build Docker image with network retry
+      shell: >
+        cd {{ app_directory }}/app && docker build 
+        --no-cache 
+        -t {{ docker_image_name }}:latest 
+        -f {{ app_directory }}/Dockerfile 
+        . 2>&1
+      environment:
+        DOCKER_BUILDKIT_DNS: "{{ dns_servers | join(',') }}"
+      register: docker_build_result
+      retries: 3
+      delay: 10
+      until: docker_build_result.rc == 0
+      changed_when: false
+
+    - name: Show Docker build output
+      debug:
+        var: docker_build_result.stdout_lines
+      when: docker_build_result.stdout_lines is defined
+      
+    - name: Stop existing container if running
+      docker_container:
+        name: "{{ app_name }}"
+        state: absent
+
+    - name: Run Docker container
+      docker_container:
+        name: "{{ app_name }}"
+        image: "{{ docker_image_name }}:latest"
+        state: started
+        restart: yes
+        ports:
+          - "{{ docker_port }}:{{ docker_port }}"
+        env:
+          ASPNETCORE_URLS: "http://+:{{ docker_port }}"
+
+    - name: Open application port in firewall
+      firewalld:
+        port: "{{ docker_port }}/tcp"
+        permanent: yes
+        state: enabled
+        immediate: yes
+      notify: Reload Firewall
+
+  handlers:
+    - name: Reload Firewall
+      command: firewall-cmd --reload

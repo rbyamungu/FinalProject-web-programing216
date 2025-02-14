@@ -1,0 +1,49 @@
+---
+- hosts: load_balancer
+  become: yes
+  tasks:
+    # First remove NGINX if present
+    - name: Remove nginx package
+      yum:
+        name: nginx
+        state: absent
+
+    # Install HAProxy
+    - name: Install HAProxy
+      yum:
+        name: haproxy
+        state: present
+
+    # Configure HAProxy
+    - name: Configure HAProxy
+      template:
+        src: ../templates/haproxy.cfg.j2
+        dest: /etc/haproxy/haproxy.cfg
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart HAProxy
+
+    # Ensure HAProxy is running
+    - name: Ensure HAProxy is running and enabled
+      systemd:
+        name: haproxy
+        state: started
+        enabled: yes
+
+    # Configure firewall
+    - name: Open HTTP port in firewall
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+      notify: Reload Firewall
+
+  handlers:
+    - name: Restart HAProxy
+      systemd:
+        name: haproxy
+        state: restarted
+
+    - name: Reload Firewall
+      command: firewall-cmd --reload
