@@ -43,6 +43,10 @@ tests:
 
 deploy:
   stage: deploy
+  before_script:
+    # Install required SSH tools
+    - apt-get update
+    - apt-get install -y openssh-client
   script:
     # Setup SSH access
     - mkdir -p ~/.ssh
