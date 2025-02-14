@@ -9,7 +9,8 @@ variables:
   OBJECTS_DIRECTORY: 'obj'
   NUGET_PACKAGES_DIRECTORY: '.nuget'
   SOURCE_CODE_PATH: 'HalfAndHalf/'
-  DEPLOY_PATH: '/home/${USER}/HalfAndHalf'
+  DEPLOY_PATH: '/home/${DEPLOY_USER}/FinalProject'
+  ANSIBLE_PROJECT_PATH: 'ansible_project'
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}"
@@ -31,29 +32,43 @@ build:
   artifacts:
     paths:
       - publish/
-      - ${SOURCE_CODE_PATH}bin/
-      - ${SOURCE_CODE_PATH}obj/
+      - dockerfile
+      - ${ANSIBLE_PROJECT_PATH}/
+      - nrc-20250203.sql
 
 tests:
   stage: test
   script:
     - dotnet test --no-restore
 
-deploy-server0:
+deploy:
   stage: deploy
   script:
+    # Setup SSH access
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY_HALF_SVR0" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $DEPLOY_HOST0 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    # Create directory and copy entire project
-    - ssh ${USER}@$DEPLOY_HOST0 "mkdir -p ${DEPLOY_PATH}"
-    - tar czf project.tar.gz -C .. .
-    - scp project.tar.gz ${USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/
-    - ssh ${USER}@$DEPLOY_HOST0 "cd ${DEPLOY_PATH} && tar xzf project.tar.gz && rm project.tar.gz"
+
+    # Create archive excluding unnecessary files
+    - tar --exclude='*.git' --exclude='obj' --exclude='bin' -czf project.tar.gz .
+
+    # Deploy to control node (half-server-0)
+    - ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "mkdir -p ${DEPLOY_PATH}"
+    - scp project.tar.gz ${DEPLOY_USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/
+    
+    # Extract and trigger Ansible deployment
+    - |
+      ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "
+        cd ${DEPLOY_PATH} && 
+        tar xzf project.tar.gz && 
+        rm project.tar.gz &&
+        cd ${ANSIBLE_PROJECT_PATH} &&
+        ansible-playbook -i inventory.ini playbooks/deploy_dotnet_app.yml
+      "
   only:
     - main
   environment:
-    name: production-server0
+    name: production
