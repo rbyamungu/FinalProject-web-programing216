@@ -1,23 +1,21 @@
-
-
 <link rel="stylesheet" href="/css/login.css">
 
- <h1 id="loginscreen">Login Page</h1>
+<h1 id="loginscreen">Database Log-In</h1>
 
-<form action="Login" method="post">
+<form asp-controller="Account" asp-action="Login" method="post">
     <label for="username">Username:</label>
-    <input type="text" id="username" name="username">
+    <input type="text" id="username" name="username" required>
 
     <label for="password">Password:</label>
-    <input type="text" id="password" name="password"><br><br>
+    <input type="password" id="password" name="password" required><br><br>
     
-    <button type="subment" id="forget-password-link"> Forget Password</button> 
+    <!-- ✅ Make Forget Password a link instead of a button -->
+    <p><a asp-controller="Home" asp-action="Forget">Forget Password?</a></p>
 
-    <p>Don't have an account? <a asp-controller="Account" asp-action="Register">Sign up here </a></p>
+    <p>Don't have an account? <a asp-controller="Account" asp-action="Register">Sign up here</a></p>
     
-    <input type="submit" value="Login"> <br> <br>
-    
-    
+    <!-- ✅ Ensure only one submit button -->
+    <input type="submit" value="Login"> <br><br>
 </form>
 
-<script src="/js/login.js"></script>
+<!-- <script src="/js/login.js"></script> -->

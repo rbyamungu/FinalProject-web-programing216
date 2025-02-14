@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using HalfAndHalf.Models; // Make sure this matches your namespace
+using HalfAndHalf.Models;
 using HalfAndHalf.Helpers;
 using HalfAndHalf.Data;
 using System.Linq;
 
-namespace HalfAndHalf.Controllers // Make sure this matches your project name
+namespace HalfAndHalf.Controllers
 {
     public class AccountController : Controller
     {
@@ -15,32 +15,28 @@ namespace HalfAndHalf.Controllers // Make sure this matches your project name
             _context = context;
         }
 
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
 
-         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
-
-
         [HttpPost]
-        public IActionResult Register(string username, string password)
+        public IActionResult Login(string username, string password)
         {
-            string salt, hashedPassword;
-            hashedPassword = PasswordHelper.HashPassword(password, out salt);
-
-            var user = new User
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user == null || !PasswordHelper.VerifyPassword(password, user.Salt, user.PasswordHash))
             {
-                Username = username,
-                PasswordHash = hashedPassword,
-                Salt = salt
-            };
+                ModelState.AddModelError("", "Invalid username or password");
+                return View();
+            }
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
-
-            return RedirectToAction("Login");
+            return RedirectToAction("Index", "Home");
         }
     }
 }
