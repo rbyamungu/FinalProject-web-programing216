@@ -50,15 +50,29 @@ deploy:
     - ssh-keyscan -H $DEPLOY_HOST0 >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
 
-    # Create temp directory and archive
-    - mkdir -p /tmp/deploy
-    - cp -r . /tmp/deploy/
-    - cd /tmp/deploy
-    - tar --exclude='*.git' --exclude='obj' --exclude='bin' -czf project.tar.gz .
+    # Create archive in a clean temporary directory
+    - TEMP_DIR=$(mktemp -d)
+    - cp -r . $TEMP_DIR/
+    - cd $TEMP_DIR
+    - tar --exclude='*.git' 
+        --exclude='obj' 
+        --exclude='bin' 
+        --exclude='project.tar.gz'
+        --exclude='*.tmp'
+        --exclude='.gitlab-ci'
+        -czf /tmp/project.tar.gz .
 
     # Deploy to control node (half-server-0)
     - ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "mkdir -p ${DEPLOY_PATH}"
     - scp project.tar.gz ${DEPLOY_USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/
+    
+    # Create temp directory and archive
+    #- mkdir -p /tmp/deploy
+    #- cp -r . /tmp/deploy/
+    #- cd /tmp/deploy
+    #- tar --exclude='*.git' --exclude='obj' --exclude='bin' -czf project.tar.gz .
+
+    
     
     # Extract and trigger Ansible deployment
     - |
