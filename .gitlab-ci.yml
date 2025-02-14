@@ -36,10 +36,6 @@ tests:
 
 deploy:
   stage: deploy
-  image: ubuntu:latest
-  before_script:
-    - apt-get update -y
-    - DEBIAN_FRONTEND=noninteractive apt-get install -y openssh-client
   script:
     # Setup SSH access
     - mkdir -p ~/.ssh
@@ -53,13 +49,14 @@ deploy:
     - TEMP_DIR=$(mktemp -d)
     - cp -r . $TEMP_DIR/
     - cd $TEMP_DIR
-    - tar --exclude='*.git' 
-        --exclude='obj' 
-        --exclude='bin' 
-        --exclude='project.tar.gz'
-        --exclude='*.tmp'
-        --exclude='.gitlab-ci'
-        -czf /tmp/project.tar.gz .
+    - |
+      tar --exclude='*.git' \
+          --exclude='obj' \
+          --exclude='bin' \
+          --exclude='project.tar.gz' \
+          --exclude='*.tmp' \
+          --exclude='.gitlab-ci' \
+          -czf /tmp/project.tar.gz .
 
     # Deploy to control node (half-server-0)
     - ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "mkdir -p ${DEPLOY_PATH}"
