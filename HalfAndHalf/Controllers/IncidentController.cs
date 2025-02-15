@@ -49,5 +49,15 @@ namespace HalfAndHalf.Controllers
 
             return View(incident);
         }
+
+        public async Task<IActionResult> TypeDistribution()
+        {
+            var incidentTypes = await _context.Incidents
+                .GroupBy(i => i.TypeOfIncident)
+                .Select(g => new { Type = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            return View(incidentTypes);
+        }
     }
 }
