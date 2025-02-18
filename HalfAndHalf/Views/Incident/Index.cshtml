@@ -1,41 +1,84 @@
-@model IEnumerable<HalfAndHalf.Models.Incident>
+@model PaginatedList<Incident>
 
-@{
-    ViewData["Title"] = "Incidents";
+<div class="row mb-3">
+    <div class="col">
+        <form asp-action="Index" method="get" class="form-inline">
+            <input type="text" name="searchString" class="form-control mr-2" placeholder="Search incidents..." />
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div id="incidentChart" class="mb-4"></div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div id="incidentTypeChart"></div>
+    </div>
+    <div class="col-md-6">
+        <div id="stateMapChart"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date Received</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Company</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.DateTimeReceived.ToShortDateString()</td>
+                        <td>@item.TypeOfIncident</td>
+                        <td>@($"{item.ResponsibleCity}, {item.ResponsibleState}")</td>
+                        <td>@(item.Company?.CompanyName ?? "N/A")</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Seqnos" class="btn btn-sm btn-info">Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <nav>
+            <ul class="pagination">
+                @if (Model.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a asp-action="Index" 
+                           asp-route-pageNumber="@(Model.PageIndex - 1)" 
+                           class="page-link">Previous</a>
+                    </li>
+                }
+                @if (Model.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a asp-action="Index" 
+                           asp-route-pageNumber="@(Model.PageIndex + 1)" 
+                           class="page-link">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="\js\incidentIndex.js"></script>
+    <script>
+        
+    </script>
 }
-
-<h1>Incidents</h1>
-<button><a class="nav-link text-dark" asp-area="" asp-controller="Incident" asp-action="TypeDistribution">TypeDistribution Graph</a>
-</button>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Date Received</th>
-            <th>Call Type</th>
-            <th>Location</th>
-            <th>Type of Incident</th>
-            <th>Company</th>
-            <th>Railroad</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        
-                      
-    @foreach (var item in Model) {
-        
-        <tr>
-            <td>@item.DateTimeReceived.ToLocalTime()</td>
-            <td>@item.CallType</td>
-            <td>@($"{item.ResponsibleCity}, {item.ResponsibleState}")</td>
-            <td>@item.TypeOfIncident</td>
-            <td>@(item.Company?.CompanyName ?? "N/A")</td>
-            <td>@(item.Railroad?.RailroadName ?? "N/A")</td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Seqnos" class="btn btn-info btn-sm">Details</a>
-            </td>
-            
-        </tr>
-    }
-    </tbody>
-</table>

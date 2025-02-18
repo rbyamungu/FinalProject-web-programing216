@@ -1,18 +1,18 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-
-namespace HalfAndHalf.Models;
-[Table("company")]
-public class Company
+using System;
+namespace HalfAndHalf.Models
 {
-    [Key]
-    [Column("company_id")]
-    public int CompanyId { get; set; }
+    public class Company
+    {
+        public Company()
+        {
+            Incidents = new HashSet<Incident>();
+        }
 
-    [Column("company_name")]
-    public string CompanyName { get; set; } = null!;
+        public int CompanyId { get; set; }
+        public string CompanyName { get; set; } = string.Empty;
+        public string OrgType { get; set; } = string.Empty;
 
-    [Column("org_type")]
-    public string OrgType { get; set; } = null!;
+        // Navigation property
+        public virtual ICollection<Incident> Incidents { get; set; }
+    }
 }

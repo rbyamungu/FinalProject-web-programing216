@@ -1,55 +1,129 @@
-@model HalfAndHalf.Models.Incident
+@model Incident
 
-@{
-    ViewData["Title"] = "Incident Details";
+<div class="container mt-4">
+    <h2>Incident Details</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Basic Information</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Incident Number</dt>
+                        <dd class="col-sm-8">@Model.Seqnos</dd>
+                        
+                        <dt class="col-sm-4">Date Received</dt>
+                        <dd class="col-sm-8">@Model.DateTimeReceived</dd>
+                        
+                        <dt class="col-sm-4">Type</dt>
+                        <dd class="col-sm-8">@Model.TypeOfIncident</dd>
+                        
+                        <dt class="col-sm-4">Cause</dt>
+                        <dd class="col-sm-8">@Model.IncidentCause</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Location</dt>
+                        <dd class="col-sm-8">@($"{Model.ResponsibleCity}, {Model.ResponsibleState} {Model.ResponsibleZip}")</dd>
+                        
+                        <dt class="col-sm-4">Company</dt>
+                        <dd class="col-sm-8">@(Model.Company?.CompanyName ?? "N/A")</dd>
+                        
+                        <dt class="col-sm-4">Railroad</dt>
+                        <dd class="col-sm-8">@(Model.Railroad?.RailroadName ?? "N/A")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Impact Details</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <div class="alert alert-info">
+                        <h5>Injuries</h5>
+                        <h3>@(Model.InjuryCount ?? 0)</h3>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="alert alert-warning">
+                        <h5>Hospitalizations</h5>
+                        <h3>@(Model.HospitalizationCount ?? 0)</h3>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="alert alert-danger">
+                        <h5>Fatalities</h5>
+                        <h3>@(Model.FatalityCount ?? 0)</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.IncidentTrain != null)
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Train Information</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Train Number</dt>
+                    <dd class="col-sm-9">@Model.IncidentTrain.NameNumber</dd>
+                    
+                    <dt class="col-sm-3">Train Type</dt>
+                    <dd class="col-sm-9">@Model.IncidentTrain.TrainType</dd>
+                </dl>
+
+                @if (Model.IncidentTrain.TrainCars?.Any() == true)
+                {
+                    <h5 class="mt-4">Affected Cars</h5>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Car Number</th>
+                                <th>Position</th>
+                                <th>Content</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var car in Model.IncidentTrain.TrainCars.OrderBy(c => c.PositionInTrain))
+                            {
+                                <tr>
+                                    <td>@car.CarNumber</td>
+                                    <td>@car.PositionInTrain</td>
+                                    <td>@car.CarContent</td>
+                                    <td>@car.CarType</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Incident Description</h4>
+        </div>
+        <div class="card-body">
+            <p class="white-space-pre-wrap">@Model.DescriptionOfIncident</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="\js\IncidentDetails.js"></script>
+    
 }
-
-<h1>Incident Details</h1>
-
-<div>
-    <h4>Incident #@Model.Seqnos</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">Date Received</dt>
-        <dd class="col-sm-9">@Model.DateTimeReceived.ToLocalTime()</dd>
-
-        <dt class="col-sm-3">Date Completed</dt>
-        <dd class="col-sm-9">@(Model.DateTimeComplete?.ToLocalTime().ToString() ?? "Not Completed")</dd>
-
-        <dt class="col-sm-3">Call Type</dt>
-        <dd class="col-sm-9">@Model.CallType</dd>
-
-        <dt class="col-sm-3">Location</dt>
-        <dd class="col-sm-9">@($"{Model.ResponsibleCity}, {Model.ResponsibleState} {Model.ResponsibleZip}")</dd>
-
-        <dt class="col-sm-3">Type of Incident</dt>
-        <dd class="col-sm-9">@Model.TypeOfIncident</dd>
-
-        <dt class="col-sm-3">Incident Cause</dt>
-        <dd class="col-sm-9">@Model.IncidentCause</dd>
-
-        <dt class="col-sm-3">Company</dt>
-        <dd class="col-sm-9">@(Model.Company?.CompanyName ?? "N/A")</dd>
-
-        <dt class="col-sm-3">Railroad</dt>
-        <dd class="col-sm-9">@(Model.Railroad?.RailroadName ?? "N/A")</dd>
-
-        <dt class="col-sm-3">Train</dt>
-        <dd class="col-sm-9">@(Model.IncidentTrain?.NameNumber ?? "N/A")</dd>
-
-        <dt class="col-sm-3">Injuries</dt>
-        <dd class="col-sm-9">@Model.InjuryCount</dd>
-
-        <dt class="col-sm-3">Hospitalizations</dt>
-        <dd class="col-sm-9">@Model.HospitalizationCount</dd>
-
-        <dt class="col-sm-3">Fatalities</dt>
-        <dd class="col-sm-9">@Model.FatalityCount</dd>
-
-        <dt class="col-sm-3">Description</dt>
-        <dd class="col-sm-9">@Model.DescriptionOfIncident</dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>

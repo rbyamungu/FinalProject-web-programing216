@@ -1,0 +1,13 @@
+// Existing configuration
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
+    // ... existing password options
+})
+.AddEntityFrameworkStores<UserDbContext>()
+.AddDefaultTokenProviders();
+
+// Add these lines to configure authentication
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Incidents/AccessDenied";
+});

@@ -4,13 +4,26 @@
 
 <h1>Sign Up</h1>
 <form asp-action="Register" method="post">
-    <div>
-        <label>Username:</label>
-        <input type="text" name="username" required />
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
-    <div>
-        <label>Password:</label>
-        <input type="password" name="password" required />
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ConfirmPassword"></label>
+        <input asp-for="ConfirmPassword" class="form-control" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ProfilePhoto"></label>
+        <input asp-for="ProfilePhoto" type="file" class="form-control" />
+        <span asp-validation-for="ProfilePhoto" class="text-danger"></span>
     </div>
     <br><p>Already have an account? <a asp-controller="Home" asp-action="loginscreen">Log in here</a></p>
 
