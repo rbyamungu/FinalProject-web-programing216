@@ -8,14 +8,14 @@ namespace HalfAndHalf.Controllers
     public class IncidentController : Controller
     {
         private readonly ApplicationDbContext _context;
-
+        private const int PageSize = 10;
         public IncidentController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         // GET: Incident
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
             var incidents = await _context.Incidents
                 .Include(i => i.Company)
