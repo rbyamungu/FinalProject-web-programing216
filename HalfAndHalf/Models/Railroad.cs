@@ -1,17 +1,18 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace HalfAndHalf.Models;
-
-[Table("railroad")]
-public class Railroad
+namespace HalfAndHalf.Models
 {
-    [Key]
-    [Column("railroad_id")]
-    public int RailroadId { get; set; }
+    public class Railroad
+    {
+        public Railroad()
+        {
+            Incidents = new HashSet<Incident>();
+            IncidentTrains = new HashSet<IncidentTrain>();
+        }
 
-    [Column("railroad_name")]
-    public string RailroadName { get; set; } = null!;
-    public int Id { get; set; }
-    public ICollection<Incident> Incidents { get; set; } = new List<Incident>();
+        public int RailroadId { get; set; }
+        public string RailroadName { get; set; } = string.Empty;
+
+        // Navigation properties
+        public virtual ICollection<Incident> Incidents { get; set; }
+        public virtual ICollection<IncidentTrain> IncidentTrains { get; set; }
+    }
 }

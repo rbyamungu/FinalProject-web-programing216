@@ -31,9 +31,7 @@ namespace HalfAndHalf.Migrations.UserDb
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    Salt = table.Column<string>(type: "text", nullable: true),
                     ProfilePhotoUrl = table.Column<string>(type: "text", nullable: true),
-                    LastLoginDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

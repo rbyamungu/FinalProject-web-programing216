@@ -1,17 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization; // Import authorization attributes
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 using HalfAndHalf.Data;
 using HalfAndHalf.Models;
 using HalfAndHalf.ViewModels;
 
 namespace HalfAndHalf.Controllers
 {
+    // Require authentication for all actions in this controller
     [Authorize]
-    public class IncidentController : Controller
+    public class IncidentsController : Controller
     {
+        // Private field to interact with the database context
         private readonly ApplicationDbContext _context;
-        public IncidentController(ApplicationDbContext context)
+
+        // Constructor to inject the database context
+        public IncidentsController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -55,11 +59,10 @@ namespace HalfAndHalf.Controllers
                 pageNumber, 
                 pageSize));
         }
-        
 
         // Action method to show details of a specific incident
         // Requires authentication to access
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             // Retrieve incident with all related entities
             var incident = await _context.Incidents
@@ -77,6 +80,28 @@ namespace HalfAndHalf.Controllers
 
             // Display incident details
             return View(incident);
+        }
+
+        // API endpoint to retrieve incident statistics by date
+        // Requires authentication to access
+        [HttpGet]
+        public async Task<IActionResult> GetIncidentStats()
+        {
+            // Group incidents by date and calculate statistics
+            var stats = await _context.Incidents
+                .GroupBy(i => i.DateTimeReceived.Date)
+                .Select(g => new 
+                {
+                    Date = g.Key,
+                    Count = g.Count(),
+                    Injuries = g.Sum(i => i.InjuryCount ?? 0),
+                    Fatalities = g.Sum(i => i.FatalityCount ?? 0)
+                })
+                .OrderBy(x => x.Date)
+                .ToListAsync();
+
+            // Return statistics as JSON
+            return Json(stats);
         }
 
         // API endpoint to retrieve incident statistics by incident type

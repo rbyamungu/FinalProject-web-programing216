@@ -17,7 +17,7 @@ namespace HalfAndHalf.Migrations.UserDb
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -40,9 +40,6 @@ namespace HalfAndHalf.Migrations.UserDb
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("LastLoginDate")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -68,9 +65,6 @@ namespace HalfAndHalf.Migrations.UserDb
                         .HasColumnType("boolean");
 
                     b.Property<string>("ProfilePhotoUrl")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Salt")
                         .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using HalfAndHalf.Models;
-using HalfAndHalf.Helpers;
 using HalfAndHalf.ViewModels;
 using HalfAndHalf.Services;
 
@@ -11,12 +10,12 @@ namespace HalfAndHalf.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IStorageService? _storageService;
+        private readonly IStorageService _storageService;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IStorageService? storageService = null)
+            IStorageService storageService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -26,7 +25,7 @@ namespace HalfAndHalf.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            return View(new RegisterViewModel());
+            return View();
         }
 
         [HttpPost]
@@ -34,20 +33,31 @@ namespace HalfAndHalf.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser 
-                { 
-                    UserName = model.Email,
-                    Email = model.Email 
-                };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 
+                if (model.ProfilePhoto != null)
+                {
+                    // Convert IFormFile to byte array
+                    using var memoryStream = new MemoryStream();
+                    await model.ProfilePhoto.CopyToAsync(memoryStream);
+                    var fileBytes = memoryStream.ToArray();
+
+                    // Generate a unique filename
+                    var fileName = $"{Guid.NewGuid()}{Path.GetExtension(model.ProfilePhoto.FileName)}";
+
+                    // Upload the file
+                    var uploadedFileName = await _storageService.UploadFileAsync(fileName, fileBytes);
+                    user.ProfilePhotoUrl = uploadedFileName;
+                }
+
                 var result = await _userManager.CreateAsync(user, model.Password);
-                
+
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
-                
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
@@ -60,7 +70,7 @@ namespace HalfAndHalf.Controllers
         public IActionResult Login(string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View(new LoginViewModel());
+            return View();
         }
 
         [HttpPost]

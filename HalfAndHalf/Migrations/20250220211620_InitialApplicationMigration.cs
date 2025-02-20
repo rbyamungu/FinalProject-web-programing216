@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HalfAndHalf.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialIdentityMigration : Migration
+    public partial class InitialApplicationMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,9 +34,7 @@ namespace HalfAndHalf.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    Salt = table.Column<string>(type: "text", nullable: true),
                     ProfilePhotoUrl = table.Column<string>(type: "text", nullable: true),
-                    LastLoginDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -79,8 +77,7 @@ namespace HalfAndHalf.Migrations
                 {
                     railroad_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    railroad_name = table.Column<string>(type: "text", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    railroad_name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -202,8 +199,7 @@ namespace HalfAndHalf.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name_number = table.Column<string>(type: "text", nullable: false),
                     train_type = table.Column<string>(type: "text", nullable: false),
-                    railroad_id = table.Column<int>(type: "integer", nullable: true),
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    railroad_id = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {

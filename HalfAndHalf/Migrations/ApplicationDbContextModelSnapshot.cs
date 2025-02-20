@@ -17,7 +17,7 @@ namespace HalfAndHalf.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -40,9 +40,6 @@ namespace HalfAndHalf.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("LastLoginDate")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -68,9 +65,6 @@ namespace HalfAndHalf.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("ProfilePhotoUrl")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Salt")
                         .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
@@ -211,9 +205,6 @@ namespace HalfAndHalf.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TrainId"));
 
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
-
                     b.Property<string>("NameNumber")
                         .IsRequired()
                         .HasColumnType("text")
@@ -282,9 +273,6 @@ namespace HalfAndHalf.Migrations
                         .HasColumnName("railroad_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RailroadId"));
-
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
 
                     b.Property<string>("RailroadName")
                         .IsRequired()
@@ -435,7 +423,7 @@ namespace HalfAndHalf.Migrations
                         .HasForeignKey("CompanyId");
 
                     b.HasOne("HalfAndHalf.Models.IncidentTrain", "IncidentTrain")
-                        .WithMany()
+                        .WithMany("Incidents")
                         .HasForeignKey("IncidentTrainId");
 
                     b.HasOne("HalfAndHalf.Models.Railroad", "Railroad")
@@ -452,7 +440,7 @@ namespace HalfAndHalf.Migrations
             modelBuilder.Entity("HalfAndHalf.Models.IncidentTrain", b =>
                 {
                     b.HasOne("HalfAndHalf.Models.Railroad", "Railroad")
-                        .WithMany()
+                        .WithMany("IncidentTrains")
                         .HasForeignKey("RailroadId");
 
                     b.Navigation("Railroad");
@@ -525,11 +513,15 @@ namespace HalfAndHalf.Migrations
 
             modelBuilder.Entity("HalfAndHalf.Models.IncidentTrain", b =>
                 {
+                    b.Navigation("Incidents");
+
                     b.Navigation("TrainCars");
                 });
 
             modelBuilder.Entity("HalfAndHalf.Models.Railroad", b =>
                 {
+                    b.Navigation("IncidentTrains");
+
                     b.Navigation("Incidents");
                 });
 #pragma warning restore 612, 618
