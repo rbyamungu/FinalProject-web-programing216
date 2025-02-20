@@ -1,38 +1,25 @@
-<link rel="stylesheet" href="/css/login.css">
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
 
-<h1 id="loginscreen">Log-In</h1>
-
-<form asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    <div class="form-group">
-        <label asp-for="Email">Username:</label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Login" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" type="password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Log in</button>
+            </div>
+        </form>
     </div>
-
-    <div class="form-group">
-        <label asp-for="Password">Password</label>
-        <input asp-for="Password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <div class="checkbox">
-            <label>
-                <input asp-for="RememberMe" />
-                @Html.DisplayNameFor(m => m.RememberMe)
-            </label>
-        </div>
-    </div>
-    
-    <!-- ✅ Make Forget Password a link instead of a button -->
-    <p><a asp-controller="Home" asp-action="Forget">Forget Password?</a></p>
-
-    <p>Don't have an account? <a asp-controller="Account" asp-action="Register">Sign up here</a></p>
-    
-    <!-- ✅ Ensure only one submit button -->
-    <input type="submit" value="Login"> <br><br>
-</form>
-
-<!-- <script src="/js/login.js"></script> -->
+</div>

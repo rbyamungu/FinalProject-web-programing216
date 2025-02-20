@@ -4,21 +4,14 @@ namespace HalfAndHalf.ViewModels
 {
     public class LoginViewModel
     {
-        public LoginViewModel()
-        {
-            Email = string.Empty;
-            Password = string.Empty;
-        }
-
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;  // Changed from UserName to Email
 
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
-        [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
     }
 }

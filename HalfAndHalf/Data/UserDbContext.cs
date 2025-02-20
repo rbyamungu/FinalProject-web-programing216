@@ -7,7 +7,7 @@ using HalfAndHalf.Models;
 
 namespace HalfAndHalf.Data
 {
-    public class UserDbContext : IdentityDbContext<User>
+    public class UserDbContext : IdentityDbContext<ApplicationUser>
     {
         public UserDbContext(DbContextOptions<UserDbContext> options)
             : base(options)

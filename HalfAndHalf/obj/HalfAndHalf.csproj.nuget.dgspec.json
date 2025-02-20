@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/rener/Documents/cnsa216/FinalProject/HalfAndHalf/HalfAndHalf.csproj": {}
+    "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj": {}
   },
   "projects": {
-    "/home/rener/Documents/cnsa216/FinalProject/HalfAndHalf/HalfAndHalf.csproj": {
+    "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/rener/Documents/cnsa216/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
+        "projectUniqueName": "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
         "projectName": "HalfAndHalf",
-        "projectPath": "/home/rener/Documents/cnsa216/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
-        "packagesPath": "/home/rener/.nuget/packages/",
-        "outputPath": "/home/rener/Documents/cnsa216/FinalProject/HalfAndHalf/obj/",
+        "projectPath": "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
+        "packagesPath": "/home/bruhigita/.nuget/packages/",
+        "outputPath": "/home/bruhigita/FinalProject/HalfAndHalf/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/rener/.nuget/NuGet/NuGet.Config"
+          "/home/bruhigita/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -42,41 +42,21 @@
               "target": "Package",
               "version": "[4.0.3, )"
             },
-            "Microsoft.CodeAnalysis.Common": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[4.8.0, )"
+              "version": "[8.0.0, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[8.0.2, )"
+              "version": "[8.0.0, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[8.0.2, )"
-            },
-            "Microsoft.EntityFrameworkCore.Relational": {
-              "target": "Package",
-              "version": "[8.0.2, )"
-            },
-            "Microsoft.EntityFrameworkCore.SQLite": {
-              "target": "Package",
-              "version": "[8.0.1, )"
-            },
-            "Microsoft.EntityFrameworkCore.Tools": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[8.0.1, )"
-            },
-            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[8.0.0, )"
             },
             "Minio": {
               "target": "Package",
-              "version": "[6.0.1, )"
+              "version": "[6.0.4, )"
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
@@ -102,7 +82,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

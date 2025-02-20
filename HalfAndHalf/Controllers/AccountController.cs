@@ -15,12 +15,13 @@ namespace HalfAndHalf.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IStorageService _storageService;
+        private readonly ApplicationDbContext _context;
 
-        public AccountController(UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            IStorageService storageService)
+        public AccountController(
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        IStorageService? storageService = null)  // Make optional
         {
-            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _storageService = storageService;
@@ -37,31 +38,16 @@ namespace HalfAndHalf.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                
-                if (model.ProfilePhoto != null)
-                {
-                    // Convert IFormFile to byte array
-                    using var memoryStream = new MemoryStream();
-                    await model.ProfilePhoto.CopyToAsync(memoryStream);
-                    var fileBytes = memoryStream.ToArray();
-
-                    // Generate a unique filename
-                    var fileName = $"{Guid.NewGuid()}{Path.GetExtension(model.ProfilePhoto.FileName)}";
-
-                    // Upload the file
-                    var uploadedFileName = await _storageService.UploadFileAsync(fileName, fileBytes);
-                    user.ProfilePhotoUrl = uploadedFileName;
-                }
-
+                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
-
+                
                 if (result.Succeeded)
                 {
+                    // Handle successful registration
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
-
+                
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);

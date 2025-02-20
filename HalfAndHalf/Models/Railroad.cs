@@ -12,4 +12,6 @@ public class Railroad
 
     [Column("railroad_name")]
     public string RailroadName { get; set; } = null!;
+    public int Id { get; set; }
+    public ICollection<Incident> Incidents { get; set; } = new List<Incident>();
 }

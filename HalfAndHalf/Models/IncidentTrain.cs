@@ -21,4 +21,7 @@ public class IncidentTrain
 
     [ForeignKey(nameof(RailroadId))]
     public virtual Railroad? Railroad { get; set; }
+    public int Id { get; set; }
+    public ICollection<IncidentTrainCar> TrainCars { get; set; } = new List<IncidentTrainCar>();
+
 }

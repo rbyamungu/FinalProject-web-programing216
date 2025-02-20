@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace ProductManagement.Services
+namespace HalfAndHalf.Services
 {
     /// <summary>
     /// Interface for storage services, typically used for file storage operations
