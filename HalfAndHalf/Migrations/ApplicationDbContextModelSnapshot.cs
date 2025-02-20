@@ -17,10 +17,83 @@ namespace HalfAndHalf.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("HalfAndHalf.Models.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastLoginDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ProfilePhotoUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Salt")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
 
             modelBuilder.Entity("HalfAndHalf.Models.Company", b =>
                 {
@@ -43,7 +116,7 @@ namespace HalfAndHalf.Migrations
 
                     b.HasKey("CompanyId");
 
-                    b.ToTable("company", (string)null);
+                    b.ToTable("company", "public");
                 });
 
             modelBuilder.Entity("HalfAndHalf.Models.Incident", b =>
@@ -126,7 +199,7 @@ namespace HalfAndHalf.Migrations
 
                     b.HasIndex("RailroadId");
 
-                    b.ToTable("incident", (string)null);
+                    b.ToTable("incident", "public");
                 });
 
             modelBuilder.Entity("HalfAndHalf.Models.IncidentTrain", b =>
@@ -137,6 +210,9 @@ namespace HalfAndHalf.Migrations
                         .HasColumnName("train_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TrainId"));
+
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
 
                     b.Property<string>("NameNumber")
                         .IsRequired()
@@ -156,40 +232,46 @@ namespace HalfAndHalf.Migrations
 
                     b.HasIndex("RailroadId");
 
-                    b.ToTable("incident_train", (string)null);
+                    b.ToTable("incident_train", "public");
                 });
 
             modelBuilder.Entity("HalfAndHalf.Models.IncidentTrainCar", b =>
                 {
                     b.Property<int>("TrainCarId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("train_car_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TrainCarId"));
 
                     b.Property<string>("CarContent")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("car_content");
 
                     b.Property<string>("CarNumber")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("car_number");
 
                     b.Property<string>("CarType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("car_type");
 
                     b.Property<int?>("IncidentTrainId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("incident_train_id");
 
                     b.Property<int?>("PositionInTrain")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("position_in_train");
 
                     b.HasKey("TrainCarId");
 
                     b.HasIndex("IncidentTrainId");
 
-                    b.ToTable("incident_train_car");
+                    b.ToTable("incident_train_car", "public");
                 });
 
             modelBuilder.Entity("HalfAndHalf.Models.Railroad", b =>
@@ -201,6 +283,9 @@ namespace HalfAndHalf.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RailroadId"));
 
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
                     b.Property<string>("RailroadName")
                         .IsRequired()
                         .HasColumnType("text")
@@ -208,25 +293,154 @@ namespace HalfAndHalf.Migrations
 
                     b.HasKey("RailroadId");
 
-                    b.ToTable("railroad", (string)null);
+                    b.ToTable("railroad", "public");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("HalfAndHalf.Models.Incident", b =>
                 {
                     b.HasOne("HalfAndHalf.Models.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .HasConstraintName("incident_company_id_fkey");
+                        .WithMany("Incidents")
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("HalfAndHalf.Models.IncidentTrain", "IncidentTrain")
                         .WithMany()
-                        .HasForeignKey("IncidentTrainId")
-                        .HasConstraintName("incident_incident_train_id_fkey");
+                        .HasForeignKey("IncidentTrainId");
 
                     b.HasOne("HalfAndHalf.Models.Railroad", "Railroad")
-                        .WithMany()
-                        .HasForeignKey("RailroadId")
-                        .HasConstraintName("incident_railroad_id_fkey");
+                        .WithMany("Incidents")
+                        .HasForeignKey("RailroadId");
 
                     b.Navigation("Company");
 
@@ -239,8 +453,7 @@ namespace HalfAndHalf.Migrations
                 {
                     b.HasOne("HalfAndHalf.Models.Railroad", "Railroad")
                         .WithMany()
-                        .HasForeignKey("RailroadId")
-                        .HasConstraintName("incident_train_railroad_id_fkey");
+                        .HasForeignKey("RailroadId");
 
                     b.Navigation("Railroad");
                 });
@@ -248,10 +461,76 @@ namespace HalfAndHalf.Migrations
             modelBuilder.Entity("HalfAndHalf.Models.IncidentTrainCar", b =>
                 {
                     b.HasOne("HalfAndHalf.Models.IncidentTrain", "IncidentTrain")
-                        .WithMany()
+                        .WithMany("TrainCars")
                         .HasForeignKey("IncidentTrainId");
 
                     b.Navigation("IncidentTrain");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("HalfAndHalf.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("HalfAndHalf.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HalfAndHalf.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("HalfAndHalf.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HalfAndHalf.Models.Company", b =>
+                {
+                    b.Navigation("Incidents");
+                });
+
+            modelBuilder.Entity("HalfAndHalf.Models.IncidentTrain", b =>
+                {
+                    b.Navigation("TrainCars");
+                });
+
+            modelBuilder.Entity("HalfAndHalf.Models.Railroad", b =>
+                {
+                    b.Navigation("Incidents");
                 });
 #pragma warning restore 612, 618
         }

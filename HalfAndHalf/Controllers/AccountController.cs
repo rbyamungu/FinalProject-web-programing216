@@ -2,25 +2,21 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using HalfAndHalf.Models;
 using HalfAndHalf.Helpers;
-using HalfAndHalf.Data;
 using HalfAndHalf.ViewModels;
 using HalfAndHalf.Services;
-using System.Linq;
 
 namespace HalfAndHalf.Controllers
 {
     public class AccountController : Controller
     {
-        
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IStorageService _storageService;
-        private readonly ApplicationDbContext _context;
+        private readonly IStorageService? _storageService;
 
         public AccountController(
-        UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
-        IStorageService? storageService = null)  // Make optional
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IStorageService? storageService = null)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -30,7 +26,7 @@ namespace HalfAndHalf.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            return View(new RegisterViewModel());
         }
 
         [HttpPost]
@@ -38,12 +34,16 @@ namespace HalfAndHalf.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
+                var user = new ApplicationUser 
+                { 
+                    UserName = model.Email,
+                    Email = model.Email 
+                };
+                
                 var result = await _userManager.CreateAsync(user, model.Password);
                 
                 if (result.Succeeded)
                 {
-                    // Handle successful registration
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
@@ -60,7 +60,7 @@ namespace HalfAndHalf.Controllers
         public IActionResult Login(string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return View(new LoginViewModel());
         }
 
         [HttpPost]

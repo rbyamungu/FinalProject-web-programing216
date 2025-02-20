@@ -2658,11 +2658,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
+      "projectUniqueName": "/mnt/d/School/CNSA_Assigment/Final Project/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
       "projectName": "HalfAndHalf",
-      "projectPath": "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
+      "projectPath": "/mnt/d/School/CNSA_Assigment/Final Project/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
       "packagesPath": "/home/bruhigita/.nuget/packages/",
-      "outputPath": "/home/bruhigita/FinalProject/HalfAndHalf/obj/",
+      "outputPath": "/mnt/d/School/CNSA_Assigment/Final Project/FinalProject/HalfAndHalf/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/bruhigita/.nuget/NuGet/NuGet.Config"
