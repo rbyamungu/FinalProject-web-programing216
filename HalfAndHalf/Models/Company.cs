@@ -1,5 +1,5 @@
 using System;
-namespace ProductManagement.Models
+namespace HalfAndHalf.Models
 {
     public class Company
     {
