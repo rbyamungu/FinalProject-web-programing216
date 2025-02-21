@@ -1,4 +1,4 @@
-namespace HalfAndHalf.Models
+namespace ProductManagement.Models
 {
     public class ErrorViewModel
     {

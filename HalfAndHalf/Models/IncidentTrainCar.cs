@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HalfAndHalf.Models
+namespace ProductManagement.Models
 {
     public class IncidentTrainCar
     {
