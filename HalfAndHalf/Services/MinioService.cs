@@ -15,7 +15,7 @@ namespace HalfAndHalf.Services
         public MinioService(IConfiguration configuration)
         {
             _configuration = configuration;
-            _defaultBucketName = configuration["Minio:DefaultBucketName"] ?? "default-bucket";
+            _defaultBucketName = configuration["Minio:DefaultBucketName"] ?? "default";
 
             _minioClient = new MinioClient()
                 .WithEndpoint(configuration["Minio:Endpoint"])
