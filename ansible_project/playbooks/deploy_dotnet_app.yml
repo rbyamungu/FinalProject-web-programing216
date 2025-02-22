@@ -3,6 +3,24 @@
 - hosts: webservers
   become: yes
 
+  pre_tasks:
+    - name: Emergency disk space cleanup
+      shell: |
+        # Clean user's ansible temp directory
+        rm -rf ~/.ansible/tmp/*
+        # Clean system temp
+        rm -rf /tmp/*
+        # Clean Docker
+        docker system prune -af
+        docker volume prune -f
+        docker container prune -f
+        # Clean package cache
+        dnf clean all
+        # Show disk space
+        df -h
+      ignore_errors: yes
+
+      
   vars:
     app_name: HalfAndHalf
     app_directory: /opt/{{ app_name }}
