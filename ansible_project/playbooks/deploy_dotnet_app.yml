@@ -117,7 +117,49 @@
       debug:
         var: debug_output.stdout_lines
 
-    # Fixed Docker build task from your working version
+    # Add disk space check and cleanup tasks here, before the build
+    - name: Check disk space
+      shell: |
+        echo "=== Disk Space ==="
+        df -h
+        echo "=== Docker Space ==="
+        docker system df
+      register: disk_info
+      ignore_errors: yes
+
+    - name: Display disk space information
+      debug:
+        var: disk_info.stdout_lines
+
+    - name: Clean up Docker system
+      shell: |
+        docker system prune -af
+        docker volume prune -f
+        docker container prune -f
+      ignore_errors: yes
+
+    - name: Clean build cache
+      shell: |
+        rm -rf /var/lib/docker/tmp/*
+        rm -rf /var/cache/dnf/*
+        rm -rf /root/.nuget/packages/*
+        rm -rf /root/.local/share/NuGet/*
+      ignore_errors: yes
+
+    - name: Check disk space after cleanup
+      shell: |
+        echo "=== Disk Space After Cleanup ==="
+        df -h
+        echo "=== Docker Space After Cleanup ==="
+        docker system df
+      register: disk_info_after
+      ignore_errors: yes
+
+    - name: Display disk space information after cleanup
+      debug:
+        var: disk_info_after.stdout_lines
+
+    # Original build task
     - name: Build Docker image with network retry
       shell: "cd {{ app_directory }}/app && docker build --no-cache -t {{ docker_image_name }}:latest -f {{ app_directory }}/Dockerfile ."
       environment:
