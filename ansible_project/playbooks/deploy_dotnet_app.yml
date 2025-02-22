@@ -102,7 +102,7 @@
       shell: >
         ls -la {{ app_directory }}/app/
       register: dir_check
-
+# Add these debug tasks before the Docker build
     - name: Show directory structure before build
       shell: |
         echo "=== App Directory ==="
@@ -117,51 +117,14 @@
       debug:
         var: debug_output.stdout_lines
 
-    # Add disk space check and cleanup tasks here, before the build
-    - name: Check disk space
-      shell: |
-        echo "=== Disk Space ==="
-        df -h
-        echo "=== Docker Space ==="
-        docker system df
-      register: disk_info
-      ignore_errors: yes
-
-    - name: Display disk space information
-      debug:
-        var: disk_info.stdout_lines
-
-    - name: Clean up Docker system
-      shell: |
-        docker system prune -af
-        docker volume prune -f
-        docker container prune -f
-      ignore_errors: yes
-
-    - name: Clean build cache
-      shell: |
-        rm -rf /var/lib/docker/tmp/*
-        rm -rf /var/cache/dnf/*
-        rm -rf /root/.nuget/packages/*
-        rm -rf /root/.local/share/NuGet/*
-      ignore_errors: yes
-
-    - name: Check disk space after cleanup
-      shell: |
-        echo "=== Disk Space After Cleanup ==="
-        df -h
-        echo "=== Docker Space After Cleanup ==="
-        docker system df
-      register: disk_info_after
-      ignore_errors: yes
-
-    - name: Display disk space information after cleanup
-      debug:
-        var: disk_info_after.stdout_lines
-
-    # Original build task
+    # Modify the build task to be more verbose
     - name: Build Docker image with network retry
-      shell: "cd {{ app_directory }}/app && docker build --no-cache -t {{ docker_image_name }}:latest -f {{ app_directory }}/Dockerfile ."
+      shell: >
+        cd {{ app_directory }}/app && docker build 
+        --no-cache 
+        -t {{ docker_image_name }}:latest 
+        -f {{ app_directory }}/Dockerfile 
+        . 2>&1
       environment:
         DOCKER_BUILDKIT_DNS: "{{ dns_servers | join(',') }}"
       register: docker_build_result
@@ -174,7 +137,7 @@
       debug:
         var: docker_build_result.stdout_lines
       when: docker_build_result.stdout_lines is defined
-
+      
     - name: Stop existing container if running
       docker_container:
         name: "{{ app_name }}"
@@ -186,15 +149,10 @@
         image: "{{ docker_image_name }}:latest"
         state: started
         restart: yes
-        network_mode: bridge
-        dns_servers: "{{ dns_servers }}"
         ports:
           - "{{ docker_port }}:{{ docker_port }}"
         env:
           ASPNETCORE_URLS: "http://+:{{ docker_port }}"
-        networks:
-          - name: bridge
-        networks_cli_compatible: yes
 
     - name: Open application port in firewall
       firewalld:
