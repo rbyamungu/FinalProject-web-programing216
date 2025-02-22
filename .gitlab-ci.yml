@@ -65,7 +65,10 @@ deploy:
         git pull && \
         echo 'Successfully pulled from main branch' && \
         export ANSIBLE_HOST_KEY_CHECKING=False && \
-        ansible-playbook -i inventory.ini ansible_project/playbooks/ping.yml --ignore-unreachable -vv || true
+        echo 'Testing half-server-2...' && \
+        ansible-playbook -i inventory.ini ansible_project/playbooks/ping.yml --limit half-server-2 -vv || true && \
+        echo 'Testing half-server-3...' && \
+        ansible-playbook -i inventory.ini ansible_project/playbooks/ping.yml --limit half-server-3 -vv || true
       "
   only:
     - main
