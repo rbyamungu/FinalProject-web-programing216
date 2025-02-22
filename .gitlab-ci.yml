@@ -61,7 +61,7 @@ deploy:
 
     # Deploy to control node (half-server-0)
     - ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "mkdir -p ${DEPLOY_PATH}"
-    - scp /tmp/project.tar.gz ${DEPLOY_USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/
+    #- scp /tmp/project.tar.gz ${DEPLOY_USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/
     
     # Extract and trigger Ansible deployment
     - |
