@@ -1,31 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj": {}
+    "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj": {
+    "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
+        "projectUniqueName": "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
         "projectName": "HalfAndHalf",
-        "projectPath": "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\HalfAndHalf.csproj",
-        "packagesPath": "C:\\Users\\nate\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nate\\FinalProject\\HalfAndHalf\\obj\\",
+        "projectPath": "/home/bruhigita/FinalProject/HalfAndHalf/HalfAndHalf.csproj",
+        "packagesPath": "/home/bruhigita/.nuget/packages/",
+        "outputPath": "/home/bruhigita/FinalProject/HalfAndHalf/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\nate\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/bruhigita/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -38,13 +32,7 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "all"
-        },
-        "SdkAnalysisLevel": "9.0.100"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -100,7 +88,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
