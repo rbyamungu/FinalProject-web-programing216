@@ -11,12 +11,12 @@ variables:
   SOURCE_CODE_PATH: 'HalfAndHalf/'
   DEPLOY_PATH: '/home/${DEPLOY_USER}/FinalProject'
   ANSIBLE_PROJECT_PATH: 'ansible_project'
+  ANSIBLE_HOST_KEY_CHECKING: 'False'
 
-#restore the nuget packeges
 before_script:
+  - apt-get update && apt-get install -y openssh-client sshpass
   - cd ${SOURCE_CODE_PATH}
   - dotnet restore --packages ${NUGET_PACKAGES_DIRECTORY}
-  - apt-get update && apt-get install -y openssh-client
 
 build:
   stage: build
@@ -29,6 +29,9 @@ build:
       - dockerfile
       - ${ANSIBLE_PROJECT_PATH}/
       - nrc-20250203.sql
+      - ansible_project/inventory/hosts
+      - ansible_project/templates/*
+      - ansible_project/playbooks/*
 
 tests:
   stage: test
@@ -38,40 +41,67 @@ tests:
 deploy:
   stage: deploy
   script:
-    # Setup SSH access
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_HALF_SVR0" | tr -d '\r' > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H $DEPLOY_HOST0 >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-
-    # Create archive in a clean temporary directory
-    - TEMP_DIR=$(mktemp -d)
-    - cp -r . $TEMP_DIR/
-    - cd $TEMP_DIR
+    # Enhanced SSH setup with proper error handling
     - |
+      mkdir -p ~/.ssh
+      chmod 700 ~/.ssh
+      echo "$SSH_PRIVATE_KEY_HALF_SVR0" | tr -d '\r' > ~/.ssh/id_rsa
+      chmod 600 ~/.ssh/id_rsa
+      
+      # Scan all hosts based on inventory
+      for server in $(grep -E "^half-server-[0-9]" ${ANSIBLE_PROJECT_PATH}/inventory.ini | cut -d' ' -f1); do
+        host_ip=$(grep $server ${ANSIBLE_PROJECT_PATH}/inventory.ini | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+        if [ ! -z "$host_ip" ]; then
+          ssh-keyscan -H $host_ip >> ~/.ssh/known_hosts
+          ssh-keyscan -H $server >> ~/.ssh/known_hosts
+        fi
+      done
+      chmod 644 ~/.ssh/known_hosts
+
+    # Create archive excluding development files
+    - |
+      TEMP_DIR=$(mktemp -d)
+      cp -r . $TEMP_DIR/
+      cd $TEMP_DIR
       tar --exclude='*.git' \
           --exclude='obj' \
           --exclude='bin' \
           --exclude='project.tar.gz' \
           --exclude='*.tmp' \
           --exclude='.gitlab-ci' \
+          --exclude='node_modules' \
+          --exclude='leftover' \
+          --exclude='*.log' \
+          --exclude='HalfAndHalf/obj' \
+          --exclude='HalfAndHalf/bin' \
+          --exclude='HalfAndHalf/wwwroot/lib' \
           -czf /tmp/project.tar.gz .
 
-    # Deploy to control node (half-server-0)
-    - ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "mkdir -p ${DEPLOY_PATH}"
-    #- scp /tmp/project.tar.gz ${DEPLOY_USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/
-    
-    # Extract and trigger Ansible deployment
+    # Deploy and run Ansible playbooks
     - |
       ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "
-        cd ${DEPLOY_PATH} && 
-        git pull &&
-        echo "We jusy finish pulling from the main banch" &&
-        ansible-playbook -i inventory.ini ansible_project/playbooks/ping.yml
+        mkdir -p ${DEPLOY_PATH} && \
+        cd ${DEPLOY_PATH} && \
+        git pull && \
+        echo 'Successfully pulled from main branch' && \
+        export ANSIBLE_HOST_KEY_CHECKING=False && \
+        ansible-playbook -i ${ANSIBLE_PROJECT_PATH}/inventory.ini ${ANSIBLE_PROJECT_PATH}/playbooks/ping.yml && \
+        if [ $? -eq 0 ]; then
+          echo 'Ping test successful, proceeding with deployment' && \
+          ansible-playbook -i ${ANSIBLE_PROJECT_PATH}/inventory.ini ${ANSIBLE_PROJECT_PATH}/playbooks/ping.yml && \
+          ansible-playbook -i ${ANSIBLE_PROJECT_PATH}/inventory.ini ${ANSIBLE_PROJECT_PATH}/playbooks/ping.yml && \
+          ansible-playbook -i ${ANSIBLE_PROJECT_PATH}/inventory.ini ${ANSIBLE_PROJECT_PATH}/playbooks/ping.yml
+        else
+          echo 'Ping test failed, aborting deployment'
+          exit 1
+        fi
       "
   only:
     - main
   environment:
     name: production
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
