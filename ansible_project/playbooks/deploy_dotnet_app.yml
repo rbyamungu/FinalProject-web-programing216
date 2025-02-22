@@ -1,35 +1,39 @@
 ---
-# Playbook to deploy .NET application using Docker
+# Playbook to deploy .NET application using Docker - runs on hosts in 'webservers' group with elevated privileges
 - hosts: webservers
   become: yes
 
+  # Variable definitions for reuse throughout the playbook
   vars:
-    app_name: HalfAndHalf
-    app_directory: /opt/{{ app_name }}
-    docker_image_name: halfandhalf
-    docker_port: 5000
-    project_path: "{{ playbook_dir }}/../../HalfAndHalf"
-    dockerfile_path: "{{ playbook_dir }}/../../dockerfile"
-    dns_servers:
+    app_name: HalfAndHalf                    # Name of the application and container
+    app_directory: /opt/{{ app_name }}       # Directory where app files will be stored
+    docker_image_name: halfandhalf           # Name of the Docker image to be built
+    docker_port: 5000                        # Port the application will listen on
+    project_path: "{{ playbook_dir }}/../../HalfAndHalf"    # Path to source code
+    dockerfile_path: "{{ playbook_dir }}/../../dockerfile"   # Path to Dockerfile
+    dns_servers:                             # DNS servers for container networking
       - 10.200.0.150
       - 10.200.0.20
 
   tasks:
+    # Install necessary system packages
     - name: Install required packages
       dnf:
         name: 
-          - docker
-          - docker-compose
-          - net-tools
-          - bind-utils
+          - docker                           # Core Docker package
+          - docker-compose                   # For managing multi-container applications
+          - net-tools                        # Network troubleshooting tools
+          - bind-utils                       # DNS troubleshooting tools
         state: present
 
+    # Ensure Docker daemon is running and starts on boot
     - name: Ensure Docker service is running and enabled
       systemd:
         name: docker
         state: started
         enabled: yes
 
+    # Configure system DNS settings
     - name: Configure DNS servers
       copy:
         content: |
@@ -40,47 +44,64 @@
         group: root
         mode: 0644
 
-    - name: Check internet connectivity
-      shell: ping -c 4 8.8.8.8
-      register: ping_result
-      ignore_errors: yes
+    # Configure Docker's default bridge network with specific subnet
+    - name: Ensure Docker bridge network is properly configured
+      docker_network:
+        name: bridge                         # Use default bridge network
+        driver: bridge                       # Network driver type
+        state: present                       # Ensure network exists
+        ipam_config:                         # IP Address Management configuration
+          - subnet: 172.17.0.0/16           # Subnet for container IPs
 
+    # Test basic internet connectivity
+    - name: Check internet connectivity
+      shell: ping -c 4 8.8.8.8              # Ping Google's DNS to verify internet access
+      register: ping_result
+      ignore_errors: yes                     # Continue playbook even if ping fails
+
+    # Test DNS resolution for NuGet
     - name: Check NuGet repository connectivity
-      shell: nslookup api.nuget.org
+      shell: nslookup api.nuget.org         # Verify DNS resolution for package repository
       register: nuget_dns_result
       ignore_errors: yes
 
+    # Create directory for application files
     - name: Ensure app directory exists
       file:
         path: "{{ app_directory }}"
         state: directory
         owner: root
         group: root
-        mode: 0755
+        mode: 0755                          # Standard directory permissions
 
+    # Configure SELinux for container file access
     - name: Set SELinux context for app directory
       sefcontext:
-        target: "{{ app_directory }}(/.*)?"
-        setype: container_file_t
+        target: "{{ app_directory }}(/.*)?"  # Apply to directory and subdirectories
+        setype: container_file_t             # SELinux type for container files
         state: present
       register: se_context
 
+    # Apply SELinux context changes
     - name: Apply new SELinux context
       command: restorecon -R {{ app_directory }}
-      when: se_context.changed
+      when: se_context.changed              # Only run if context was modified
 
+    # Copy application Dockerfile
     - name: Copy Dockerfile
       copy:
         src: "{{ dockerfile_path }}"
         dest: "{{ app_directory }}/Dockerfile"
-        mode: preserve
+        mode: preserve                      # Maintain original file permissions
 
+    # Copy application source code
     - name: Copy project files
       copy:
         src: "{{ project_path }}/"
         dest: "{{ app_directory }}/app/"
         mode: preserve
 
+    # Display connectivity test results
     - name: Verify connectivity diagnostics
       debug:
         msg: 
@@ -88,21 +109,25 @@
           - "NuGet DNS result: {{ nuget_dns_result.rc }}"
       failed_when: false
 
+    # Clean up any duplicate directories
     - name: Clean up duplicate directories
       file:
         path: "{{ app_directory }}/app/HalfAndHalf"
         state: absent
 
+    # Remove unnecessary source directory
     - name: Clean up src directory
       file:
         path: "{{ app_directory }}/src"
         state: absent
 
+    # Verify directory structure
     - name: Ensure proper directory structure
       shell: >
         ls -la {{ app_directory }}/app/
       register: dir_check
-# Add these debug tasks before the Docker build
+
+    # Debug task to show directory contents
     - name: Show directory structure before build
       shell: |
         echo "=== App Directory ==="
@@ -113,55 +138,83 @@
         cat {{ app_directory }}/Dockerfile
       register: debug_output
 
+    # Display debug information
     - name: Display debug output
       debug:
         var: debug_output.stdout_lines
 
-    # Modify the build task to be more verbose
+    # Build Docker image with retry mechanism
     - name: Build Docker image with network retry
       shell: >
         cd {{ app_directory }}/app && docker build 
-        --no-cache 
-        -t {{ docker_image_name }}:latest 
-        -f {{ app_directory }}/Dockerfile 
-        . 2>&1
+        --no-cache                          # Force fresh build
+        -t {{ docker_image_name }}:latest   # Tag the image
+        -f {{ app_directory }}/Dockerfile   # Specify Dockerfile location
+        . 2>&1                             # Build context and capture all output
       environment:
-        DOCKER_BUILDKIT_DNS: "{{ dns_servers | join(',') }}"
+        DOCKER_BUILDKIT_DNS: "{{ dns_servers | join(',') }}"  # Use specified DNS servers
       register: docker_build_result
-      retries: 3
-      delay: 10
-      until: docker_build_result.rc == 0
+      retries: 3                           # Retry up to 3 times
+      delay: 10                            # Wait 10 seconds between retries
+      until: docker_build_result.rc == 0   # Keep trying until successful
       changed_when: false
 
+    # Show Docker build logs
     - name: Show Docker build output
       debug:
         var: docker_build_result.stdout_lines
       when: docker_build_result.stdout_lines is defined
-      
+
+    # Remove existing container if present
     - name: Stop existing container if running
       docker_container:
         name: "{{ app_name }}"
         state: absent
 
+    # Deploy new container with network configuration
     - name: Run Docker container
       docker_container:
-        name: "{{ app_name }}"
-        image: "{{ docker_image_name }}:latest"
-        state: started
-        restart: yes
-        ports:
+        name: "{{ app_name }}"                    # Container name
+        image: "{{ docker_image_name }}:latest"   # Image to use
+        state: started                            # Ensure container is running
+        restart: yes                              # Restart policy
+        network_mode: bridge                      # Use bridge network
+        dns_servers: "{{ dns_servers }}"          # Configure DNS servers
+        ports:                                    # Port mapping
           - "{{ docker_port }}:{{ docker_port }}"
-        env:
+        env:                                      # Environment variables
           ASPNETCORE_URLS: "http://+:{{ docker_port }}"
+        networks:                                 # Network configuration
+          - name: bridge
+        networks_cli_compatible: yes              # Enable CLI compatibility
+        container_default_behavior: compatibility  # Use compatible defaults
+        capabilities:                             # Container capabilities
+          - NET_ADMIN                            # Allow network administration
+        sysctls:                                 # System controls
+          net.ipv4.ip_forward: 1                 # Enable IP forwarding
 
+    # Configure firewall
     - name: Open application port in firewall
       firewalld:
-        port: "{{ docker_port }}/tcp"
-        permanent: yes
+        port: "{{ docker_port }}/tcp"            # Open specified port
+        permanent: yes                           # Make rule persistent
         state: enabled
-        immediate: yes
+        immediate: yes                          # Apply immediately
       notify: Reload Firewall
 
+    # Test container network connectivity
+    - name: Verify container network connectivity
+      shell: docker exec {{ app_name }} ping -c 4 8.8.8.8
+      register: container_network_test
+      ignore_errors: yes
+
+    # Display network test results
+    - name: Display network test results
+      debug:
+        var: container_network_test.stdout_lines
+      when: container_network_test.stdout_lines is defined
+
+  # Handlers run when notified by tasks
   handlers:
     - name: Reload Firewall
-      command: firewall-cmd --reload
+      command: firewall-cmd --reload            # Reload firewall configuration
