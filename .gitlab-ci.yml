@@ -14,9 +14,9 @@ variables:
   ANSIBLE_HOST_KEY_CHECKING: 'False'
 
 before_script:
+  - apt-get update && apt-get install -y openssh-client sshpass
   - cd ${SOURCE_CODE_PATH}
   - dotnet restore --packages ${NUGET_PACKAGES_DIRECTORY}
-  - apt-get update && apt-get install -y openssh-client
 
 build:
   stage: build
@@ -31,29 +31,42 @@ build:
       - nrc-20250203.sql
       - inventory.ini
 
+tests:
+  stage: test
+  script:
+    - dotnet test --no-restore
+
 deploy:
   stage: deploy
   script:
     # Setup SSH access
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_HALF_SVR0" | tr -d '\r' > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
     - |
-      # Add host keys for server 0 and 1
+      mkdir -p ~/.ssh
+      chmod 700 ~/.ssh
+      echo "$SSH_PRIVATE_KEY_HALF_SVR0" | tr -d '\r' > ~/.ssh/id_rsa
+      chmod 600 ~/.ssh/id_rsa
+      # Add host keys directly for all servers
       ssh-keyscan -H $DEPLOY_HOST0 >> ~/.ssh/known_hosts
       ssh-keyscan -H $DEPLOY_HOST1 >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
+      ssh-keyscan -H $DEPLOY_HOST2 >> ~/.ssh/known_hosts
+      ssh-keyscan -H $DEPLOY_HOST3 >> ~/.ssh/known_hosts
+      chmod 644 ~/.ssh/known_hosts
 
-    # Deploy to control node and run ping test
+    # Simple deployment for ping test
     - |
       ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "
         cd ${DEPLOY_PATH} && \
         git pull && \
-        echo 'Running ping test...' && \
-        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory.ini ansible_project/playbooks/ping.yml -vv
+        echo 'Successfully pulled from main branch' && \
+        export ANSIBLE_HOST_KEY_CHECKING=False && \
+        ansible-playbook -i inventory.ini ansible_project/playbooks/ping.yml -vv
       "
   only:
     - main
   environment:
     name: production
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
