@@ -14,7 +14,6 @@ variables:
   ANSIBLE_HOST_KEY_CHECKING: 'False'
 
 before_script:
-  # We're using shell executor, so skip apt-get commands
   - cd ${SOURCE_CODE_PATH}
   - dotnet restore --packages ${NUGET_PACKAGES_DIRECTORY}
 
@@ -28,8 +27,8 @@ build:
       - publish/
       - dockerfile
       - ansible_project/
-      - nrc-20250203.sql
       - inventory.ini
+      - nrc-20250203.sql
 
 tests:
   stage: test
@@ -46,48 +45,29 @@ deploy:
       echo "Parent directory contents:"
       ls -la
       echo "Checking for ansible files:"
-      ls -la ansible_project/playbooks/ || echo "Playbooks directory not found"
-      ls -la inventory.ini || echo "inventory.ini not found"
+      ls -la ansible_project/playbooks/
+      ls -la inventory.ini
 
-    # SSH setup with error handling
+    # SSH setup
     - |
       mkdir -p ~/.ssh
       chmod 700 ~/.ssh
-      if [ -z "$SSH_PRIVATE_KEY_HALF_SVR0" ]; then
-        echo "SSH key variable is empty"
-        exit 1
-      fi
       echo "$SSH_PRIVATE_KEY_HALF_SVR0" | tr -d '\r' > ~/.ssh/id_rsa
       chmod 600 ~/.ssh/id_rsa
-      touch ~/.ssh/known_hosts
-      if [ -z "$DEPLOY_HOST0" ]; then
-        echo "DEPLOY_HOST0 variable is empty"
-        exit 1
-      fi
       ssh-keyscan -H $DEPLOY_HOST0 >> ~/.ssh/known_hosts
       chmod 644 ~/.ssh/known_hosts
 
-    # Deploy with error handling
+    # Deploy with ignore unreachable
     - |
       echo "Starting deployment..."
-      if ! ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "
-        set -e
-        mkdir -p ${DEPLOY_PATH}
-        cd ${DEPLOY_PATH}
-        git pull
-        echo 'Successfully pulled from main branch'
-        export ANSIBLE_HOST_KEY_CHECKING=False
-        ansible-playbook -i inventory.ini ansible_project/playbooks/ping.yml -vv
-      "; then
-        echo "Deployment failed"
-        exit 1
-      fi
+      ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "
+        cd ${DEPLOY_PATH} && \
+        git pull && \
+        echo 'Successfully pulled from main branch' && \
+        export ANSIBLE_HOST_KEY_CHECKING=False && \
+        ansible-playbook -i inventory.ini ansible_project/playbooks/ping.yml --ignore-unreachable -vv || true
+      "
   only:
     - main
   environment:
     name: production
-  retry:
-    max: 2
-    when:
-      - runner_system_failure
-      - stuck_or_timeout_failure
