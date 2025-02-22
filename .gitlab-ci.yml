@@ -1,4 +1,4 @@
-image: mcr.microsoft.com/dotnet/sdk:latest
+image: mcr.microsoft.com/dotnet/sdk:8.0
 
 stages:
   - build
@@ -14,9 +14,13 @@ variables:
 
 #restore the nuget packeges
 before_script:
-  - cd ${SOURCE_CODE_PATH}
-  - dotnet restore --packages ${NUGET_PACKAGES_DIRECTORY}
-  - apt-get update && apt-get install -y openssh-client
+  - mkdir ${NUGET_PACKAGES_DIRECTORY}
+  - chmod 750 ${NUGET_PACKAGES_DIRECTORY}
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir .cache
+  - chmod 750 .cache
 
 build:
   stage: build
@@ -61,16 +65,15 @@ deploy:
 
     # Deploy to control node (half-server-0)
     - ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "mkdir -p ${DEPLOY_PATH}"
-    - scp /tmp/project.tar.gz ${DEPLOY_USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/
-    
+    #- scp /tmp/project.tar.gz ${DEPLOY_USER}@$DEPLOY_HOST0:${DEPLOY_PATH}/
+
     # Extract and trigger Ansible deployment
     - |
       ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "
-        cd ${DEPLOY_PATH} && 
-        tar xzf project.tar.gz && 
+        cd ${DEPLOY_PATH} &&
         rm project.tar.gz &&
         cd ${ANSIBLE_PROJECT_PATH} &&
-        ansible-playbook -i inventory.ini playbooks/deploy_dotnet_app.yml
+        ansible-playbook -i inventory.ini playbooks/ping.yml
       "
   only:
     - main

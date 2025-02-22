@@ -1,0 +1,8 @@
+---
+- name: Ping all hosts in inventory
+  hosts: all
+  gather_facts: false
+  
+  tasks:
+    - name: Ping test
+      ping:
