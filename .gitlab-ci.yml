@@ -68,6 +68,7 @@ deploy:
       ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "
         cd ${DEPLOY_PATH} && 
         git pull &&
+        echo "We jusy finish pulling from the main banch" &&
         ansible-playbook -i inventory.ini ansible_project/playbooks/ping.yml
       "
   only:
