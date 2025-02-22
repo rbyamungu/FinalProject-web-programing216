@@ -67,8 +67,8 @@ deploy:
     - |
       ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "
         cd ${DEPLOY_PATH} && 
-        cd ${ANSIBLE_PROJECT_PATH} &&
-        ansible-playbook -i inventory.ini playbooks/ping.yml
+        git pull &&
+        ansible-playbook -i inventory.ini ansible_project/playbooks/ping.yml
       "
   only:
     - main
