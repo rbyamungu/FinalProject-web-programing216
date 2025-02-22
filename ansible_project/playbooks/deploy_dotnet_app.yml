@@ -1,6 +1,8 @@
 ---
+# Playbook to deploy .NET application using Docker
 - hosts: webservers
   become: yes
+
   pre_tasks:
     - name: Emergency disk space cleanup
       shell: |
@@ -34,6 +36,7 @@
           - docker-compose
           - net-tools
           - bind-utils
+          - rsync
         state: present
 
     - name: Ensure Docker service is running and enabled
@@ -62,13 +65,21 @@
       register: nuget_dns_result
       ignore_errors: yes
 
-    - name: Ensure app directory exists
+    - name: Clean destination directory
       file:
         path: "{{ app_directory }}"
+        state: absent
+
+    - name: Create app directory structure
+      file:
+        path: "{{ item }}"
         state: directory
         owner: root
         group: root
         mode: 0755
+      with_items:
+        - "{{ app_directory }}"
+        - "{{ app_directory }}/app"
 
     - name: Set SELinux context for app directory
       sefcontext:
@@ -88,10 +99,15 @@
         mode: preserve
 
     - name: Copy project files
-      copy:
+      synchronize:
         src: "{{ project_path }}/"
         dest: "{{ app_directory }}/app/"
-        mode: preserve
+        delete: yes
+        rsync_opts:
+          - "--exclude=bin"
+          - "--exclude=obj"
+          - "--exclude=.git"
+          - "--exclude=.vs"
 
     - name: Verify connectivity diagnostics
       debug:
@@ -99,21 +115,6 @@
           - "Ping result: {{ ping_result.rc }}"
           - "NuGet DNS result: {{ nuget_dns_result.rc }}"
       failed_when: false
-
-    - name: Clean up duplicate directories
-      file:
-        path: "{{ app_directory }}/app/HalfAndHalf"
-        state: absent
-
-    - name: Clean up src directory
-      file:
-        path: "{{ app_directory }}/src"
-        state: absent
-
-    - name: Ensure proper directory structure
-      shell: >
-        ls -la {{ app_directory }}/app/
-      register: dir_check
 
     - name: Show directory structure before build
       shell: |
@@ -132,6 +133,7 @@
     - name: Build Docker image with network retry
       shell: "cd {{ app_directory }}/app && docker build --no-cache -t {{ docker_image_name }}:latest -f {{ app_directory }}/Dockerfile ."
       environment:
+        DOCKER_BUILDKIT: "0"
         DOCKER_BUILDKIT_DNS: "{{ dns_servers | join(',') }}"
       register: docker_build_result
       retries: 3
