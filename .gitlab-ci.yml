@@ -16,6 +16,7 @@ variables:
 before_script:
   - cd ${SOURCE_CODE_PATH}
   - dotnet restore --packages ${NUGET_PACKAGES_DIRECTORY}
+  - apt-get update && apt-get install -y openssh-client
 
 build:
   stage: build
