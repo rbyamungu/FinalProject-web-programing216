@@ -67,7 +67,6 @@ deploy:
     - |
       ssh ${DEPLOY_USER}@$DEPLOY_HOST0 "
         cd ${DEPLOY_PATH} && 
-        rm project.tar.gz &&
         cd ${ANSIBLE_PROJECT_PATH} &&
         ansible-playbook -i inventory.ini playbooks/ping.yml
       "
